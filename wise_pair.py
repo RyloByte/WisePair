@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 # This script is built to perform a pairwise comparison of samples
 # containing locus information from DNA extraction
 # The purpose is to score all samples against eachother to allow for
@@ -19,6 +21,7 @@ import sys
 import ast
 
 warnings.simplefilter("error")
+pd.options.mode.chained_assignment = None  # default='warn'
 
 # Definitions
 def parse_file(data):
@@ -87,7 +90,10 @@ def main(simdir, simlist):
 
 	# make list of sim files
 	list_dir = os.listdir(sim_path)
-	sim_list = ast.literal_eval(simlist)
+	if simlist.find('*') != -1:
+		sim_list = [x for x in list_dir if x.find('.csv') != -1 and x.find('_score.csv') == -1]
+	else:
+		sim_list = ast.literal_eval(simlist)
 	#sim_list = ['pairwise_error.csv', 'pairwise_full_noLW20.csv']
 
 	# input model data to be used for real data analysis if it exists
@@ -152,16 +158,16 @@ def main(simdir, simlist):
 		score_df = score_df.fillna('##')
 		# output the scoring dataframe for safe keeping
 		score_df.to_csv(file.rsplit('.', 1)[0] + '_score.csv')
-		'''
 		# make histogram of distinct individuals
 		sim_stats = []
 		distinct_individual_df = score_df[(score_df.resampled == False)]
-		group_dist_in = distinct_individual_df.groupby(['normalized_score']
-			)['normalized_score'].count().reset_index(
-			)
+		group_dist_in = pd.DataFrame(distinct_individual_df.groupby(['normalized_score']
+			)['normalized_score'].count())
+		group_dist_in.columns = ['count']
+		group_dist_in = group_dist_in.reset_index()
 		fig, ax = plt.subplots()
 		# get stats for dist data
-		y_dist_max = group_dist_in[0].max()
+		y_dist_max = group_dist_in['count'].max()
 		x_dist_max = group_dist_in['normalized_score'].max()
 		x_dist_min = group_dist_in['normalized_score'].min()
 		x_dist_mean = np.mean(group_dist_in['normalized_score'])
@@ -180,7 +186,7 @@ def main(simdir, simlist):
 			bins = group_dist_in.normalized_score
 			width = 0.7 * (bins[1] - bins[0])
 			center = (bins[:-1] + bins[1:]) / 2
-			plt.bar(group_dist_in.normalized_score, group_dist_in[0], 
+			plt.bar(group_dist_in.normalized_score, group_dist_in['count'], 
 				align='center', width=width, color='b'
 				)
 			plt.plot([lower_bound,lower_bound], [y_dist_max,0], linestyle='dashed', color='b')
@@ -219,19 +225,21 @@ def main(simdir, simlist):
 		# make histogram of resampled individuals
 		resampled_individual_df = score_df[(score_df.resampled == True)]
 		# add general virtsim id for creation of second graph
-		resampled_individual_df['general_sample'] = resampled_individual_df['sample_0'].map(
-			lambda x: '_'.join(x.split('_')[0:2])
-			)
+		general_sample = resampled_individual_df['sample_0'].apply(lambda x: '_'.join(x.split('_')[0:2]))
+		resampled_individual_df['general_sample'] = general_sample
 		found_resamples = resampled_individual_df.shape[0]
 		if found_resamples != 0:
-			group_res_in = resampled_individual_df.groupby(['normalized_score']
-				)['normalized_score'].count().reset_index(
-				)
-			quant_res_in = resampled_individual_df.groupby(['general_sample']
-				)['general_sample'].count().reset_index(
-				)
+			group_res_in = pd.DataFrame(resampled_individual_df.groupby(['normalized_score']
+				)['normalized_score'].count())
+			group_res_in.columns = ['count']
+			group_res_in = group_res_in.reset_index()
+
+			quant_res_in = pd.DataFrame(resampled_individual_df.groupby(['general_sample']
+				)['general_sample'].count())
+			quant_res_in.columns = ['count']
+			quant_res_in = quant_res_in.reset_index()
 			# get stats for res data
-			y_res_max = group_res_in[0].max()
+			y_res_max = group_res_in['count'].max()
 			x_res_max = group_res_in['normalized_score'].max()
 			x_res_min = group_res_in['normalized_score'].min()
 			x_res_mean = group_res_in['normalized_score'].mean()
@@ -249,7 +257,7 @@ def main(simdir, simlist):
 					]
 			bins = group_res_in['normalized_score']
 			# plot the histogram data for resampled
-			plt.bar(group_res_in.normalized_score, group_res_in[0],
+			plt.bar(group_res_in.normalized_score, group_res_in['count'],
 				align='center', width=width, color='r'
 				)
 			# determine color of shaded area
@@ -271,17 +279,18 @@ def main(simdir, simlist):
 		plt.xlabel('score bins')
 		plt.ylabel('frequency')
 		plt.title(file.split('.')[0].split('/')[-1])
-		pp = PdfPages(file.split('.')[0] + '.pdf')
+		pp = PdfPages(file.rsplit('.',1)[0] + '.pdf')
 		pp.savefig(fig)
 		plt.clf()
 
 		if found_resamples != 0:
 			fig, ax = plt.subplots()
-			quant_res_in = resampled_individual_df.groupby(['general_sample']
-				)['general_sample'].count().reset_index(
-				)
+			quant_res_in = pd.DataFrame(resampled_individual_df.groupby(['general_sample']
+				)['general_sample'].count())
+			quant_res_in.columns = ['count']
+			quant_res_in = quant_res_in.reset_index()
 			resample_list = [str(x[0]) + ' ' + str(x[1]) 
-				for x in zip(quant_res_in.general_sample,quant_res_in[0])
+				for x in zip(quant_res_in.general_sample,quant_res_in['count'])
 				]
 			quant_res_in.columns = ['num_indv','num_resamp']
 			quant_double_group = quant_res_in.groupby(['num_resamp']
@@ -305,9 +314,7 @@ def main(simdir, simlist):
 			plt.clf()
 		pp.close()
 		plt.close('all')
-		'''
 
-	'''
 	write2model = False
 	if write2model == True:
 		with open(sim_path + 'model_stats.tsv','w') as o:
@@ -317,7 +324,6 @@ def main(simdir, simlist):
 				) + '\n')
 			for stats in sim_model_data:
 				o.write('\t'.join(stats) + '\n')
-	'''
 
 
 # Start Main

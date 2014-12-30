@@ -6,7 +6,7 @@ from collections import Counter
 import sys
 import math
 import json
-import click
+import argparse
 
 
 def virtualGenepool(loci_range, allele_range):
@@ -321,30 +321,17 @@ def cause_ADO(sub_genotype, ADO_rate_dictionary, locus_name):
 
 	return sub_genotype
 
+def getError(errfile):
+	with open(errfile,'r') as e:
+		error_data = json.load(e)
+		ADO_rate_dictionary = {str(x):float(error_data[x]['ADO']) for x in error_data.keys()}
+		FA_rate_dictionary = {str(x):float(error_data[x]['FA']) for x in error_data.keys()}
+	return ADO_rate_dictionary, FA_rate_dictionary
+
 
 ###############################################################################################
 
-### MAIN ###
-@click.command()
-@click.option('--simtype',
-	help='Specify which type of simulation type; virtpop, simfile, genepop.'
-	)
-@click.option('--infile',
-	help='Specify path to input file; GENEPOP, SIMFILE, or no input.'
-	)
-@click.option('--boutlimit',
-	help='Total number of sampling bouts for a season.'
-	)
-@click.option('--samplelimit',
-	help='Total number of samples for a season.'
-	)
-@click.option('--popsize',
-	help='Specify the size of a virtual population.'
-	)
-@click.option('--outfile',
-	help='Specify the output file.'
-	)
-def main(simtype, infile, boutlimit,
+def main(simtype, infile, errfile, boutlimit,
 	samplelimit, popsize, outfile):
 	# assemble the virtual population based on user specifications
 	# output object has virt pop, sample_limit, and bout limit
@@ -356,12 +343,9 @@ def main(simtype, infile, boutlimit,
 	population_dictionary = assemble_it[5]
 	# collect virtual samples over a season
 	season_sample = virtualSeason(virtual_population)
-	ADO_rate_dictionary = {'Lc5':0.009164, 'Lc26':0.121205, 'SGPv10':0.051364,
-							'TBPv2':0.000000, 'M11':0.000000, 'BG':0.052631,
-							'LW20':0.000000, 'HI15':0.028083, 'Pv11':0.000000}
-	FA_rate_dictionary = {'Lc5':0.133324, 'Lc26':0.150738, 'SGPv10':0.063572,
-							'TBPv2':0.052140, 'M11':0.067303, 'BG':0.000000,
-							'LW20':0.000000, 'HI15':0.062986, 'Pv11':0.000000}
+	# get error rates for each loci from input json file
+	ADO_rate_dictionary, FA_rate_dictionary = getError(errfile)
+
 	code2loci_dictionary = assemble_it[7]
 	population, sample_limit, bout_limit = virtual_population
 	#save_file_name = 'P{0}_SL{1}_BL{2}.csv'.format(unicode(str(len(population)),'utf-8'),
@@ -413,11 +397,40 @@ def main(simtype, infile, boutlimit,
 		print sample_id, 'was resampled',multiplicity,'times...'
 	'''
 
+
+### MAIN ###
 if __name__ == '__main__':
-	if len(sys.argv) < 2:
-		print "Missing flags, type \"--help\" for assistance..."
-		sys.exit()
-	main()
+# collect arguments from commandline
+	parser = argparse.ArgumentParser(description='insert program description')
+	parser.add_argument('-t','--simtype', help='Specify which type of simulation type; virtpop, simfile, genepop.', 
+		required=True
+		)
+	parser.add_argument('-i','--infile', help='Specify path to input file; GENEPOP, SIMFILE, or no input.', 
+		required=True
+		)
+	parser.add_argument('-e','--errfile', help='Specify path to input error file; JSON format', 
+		required=True
+		)
+	parser.add_argument('-b','--boutlimit', help='Total number of sampling bouts for a season.', 
+		required=True
+		)
+	parser.add_argument('-s','--samplelimit', help='Total number of samples for a season.', 
+		required=True
+		)
+	parser.add_argument('-p','--popsize', help='Specify the size of a virtual population.', 
+		required=True
+		)
+	parser.add_argument('-o','--outfile', help='Specify the output file.', 
+		required=True
+		)
+	args = vars(parser.parse_args())
+	# check to make sure that enough arguments were passed before proceeding
+	if len(sys.argv) < 7:
+		sys.exit("Missing flags, type \"--help\" for assistance...")
+	main(args['simtype'], args['infile'],args['errfile'],
+		args['boutlimit'],args['samplelimit'],args['popsize'],args['outfile']
+		)
+
 
 
 
