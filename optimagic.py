@@ -10,6 +10,7 @@ from os.path import dirname, realpath, join, exists
 from os import listdir, makedirs
 import pandas as pd
 from subprocess import Popen, PIPE
+from itertools import product
 
 
 def count_resampled(simdir_list, resampmin, nummin):
@@ -54,7 +55,7 @@ def run_wise(simdir, simlist):
 	run = Popen(['python', 'wise_pair.py', '-s', simdir, '-l', str(simlist)], stdout=PIPE)
 	run.stdout.read()
 	
-def main(simdir, popsize, samplim, boutlim, resampmin, nummin, 
+def optimaker(simdir, popsize, samplim, boutlim, resampmin, nummin, 
 	runsim, iterlim, simtype, simfile, errfile
 	):
 	if runsim == 'True':
@@ -77,14 +78,60 @@ def main(simdir, popsize, samplim, boutlim, resampmin, nummin,
 		print 'No score files found in %s' % simdir
 		sys.exit()
 	find_resampled = count_resampled(simdir_list, resampmin, nummin)
+
 	print '#########################################################################################'
 	print 'Criteria:\n\t%s Resampled Individutals\n\t%s Times Resamples' % (resampmin, nummin)
 	print '\t%s Number of Bouts\n\t%s Samples per Bout \n\tPopulation of %s\n' % (boutlim, str(int(samplim)/int(boutlim)), popsize)
-	print find_resampled[0]
+	#print find_resampled[0]
 	print find_resampled[1]
 	print '#########################################################################################'
 	print '\n\n'
+	return find_resampled[1]
 
+def main(simdir, popsize, sampran, boutran, resampmin,
+	numminran, runsim, iterlim, simtype, simfile, errfile
+	):
+	if sampran.find(',') != -1:
+		sampran_list = range(int(sampran.split(',')[0]), int(sampran.split(',')[1]) + 1)
+	else:
+		sampran_list = [sampran]
+	if boutran.find(',') != -1:
+		boutran_list = range(int(boutran.split(',')[0]), int(boutran.split(',')[1]) + 1)
+	else:
+		boutran_list = [boutran]
+	if numminran.find(',') != -1:
+		numminran_list = range(int(numminran.split(',')[0]), int(numminran.split(',')[1]) + 1)
+	else:
+		numminran_list = [numminran]
+
+	range_tuples = list(product(sampran_list,boutran_list,numminran_list))
+	print 'Running %s simulations.' % (str(len(range_tuples)))
+	good_sim_stats_df = pd.DataFrame(columns=['population', 'number_of_samples',
+		'number_of_bout', 'min_resampled', 'min_times_resampled',
+		'tot_resamp', 'mean_rs_per_ind', 'met_resamp_min', 'mean_rs_per_mrm']
+		)
+	other_sim_stats_df = pd.DataFrame(columns=['population', 'number_of_samples',
+		'number_of_bout', 'min_resampled', 'min_times_resampled',
+		'tot_resamp', 'mean_rs_per_ind', 'met_resamp_min', 'mean_rs_per_mrm']
+		)
+	for range_tuple in range_tuples:
+		boutlim = str(range_tuple[1])
+		samplim = str(int(range_tuple[0]) * int(boutlim))
+		nummin = str(range_tuple[2])
+		sim_stats_mean = optimaker(simdir, popsize, samplim, boutlim, resampmin, nummin, 
+			runsim, iterlim, simtype, simfile, errfile)
+		if (sim_stats_mean[2] >= int(resampmin) and sim_stats_mean[3] >= int(nummin)):
+			good_sim_stats_df.loc[len(good_sim_stats_df) + 1] = [popsize, samplim, boutlim, resampmin, nummin,
+				round(sim_stats_mean[0],2), round(sim_stats_mean[1],2), round(sim_stats_mean[2],2),
+				round(sim_stats_mean[3],2)
+				]
+		else:
+			other_sim_stats_df.loc[len(other_sim_stats_df) + 1] = [popsize, samplim, boutlim, resampmin, nummin,
+				round(sim_stats_mean[0],2), round(sim_stats_mean[1],2), round(sim_stats_mean[2],2),
+				round(sim_stats_mean[3],2)
+				]
+	good_sim_stats_df.to_csv('optimagic_output.txt')
+	other_sim_stats_df.to_csv('optimagic_output_BAD.csv')
 
 
 
@@ -97,16 +144,16 @@ if __name__ == '__main__':
 	parser.add_argument('-p','--popsize', help='population size.', 
 		required=True
 		)
-	parser.add_argument('-l','--samplim', help='total sample limit', 
+	parser.add_argument('-l','--sampran', help='range of samples per bout.', 
 		required=True
 		)
-	parser.add_argument('-b','--boutlim', help='bout limit.', 
+	parser.add_argument('-b','--boutran', help='range of bouts.', 
 		required=True
 		)
 	parser.add_argument('-r','--resampmin', help='minimum individuals resampled over season.', 
 		required=True
 		)
-	parser.add_argument('-n','--nummin', help='minimum number of resamples per resampled individual.', 
+	parser.add_argument('-n','--numminran', help='range for minimum number of resamples per resampled individual.', 
 		required=True
 		)
 	parser.add_argument('-u','--runsim', help='use simerator to run simulations.', 
@@ -128,7 +175,7 @@ if __name__ == '__main__':
 	# check to make sure that enough arguments were passed before proceeding
 	if len(sys.argv) < 2:
 		sys.exit("Missing flags, type \"--help\" for assistance...")
-	main(args['simdir'], args['popsize'], args['samplim'], args['boutlim'],
-		args['resampmin'], args['nummin'], args['runsim'], args['iterlim'],
+	main(args['simdir'], args['popsize'], args['sampran'], args['boutran'],
+		args['resampmin'], args['numminran'], args['runsim'], args['iterlim'],
 		args['simtype'], args['simfile'], args['errfile']
 		)
