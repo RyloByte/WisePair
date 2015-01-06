@@ -2,4 +2,7 @@ OM_simdir/
 PEDANT_ErrorRates.pdf
 backup/
 history.txt
-
+Simulated_WisePair_Breakdown.docx
+opt_regout.txt
+optimagic_output.txt
+optimagic_output_BAD.csv

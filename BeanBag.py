@@ -9,6 +9,68 @@ import json
 import argparse
 
 
+def assemblePopulation(simtype, infile, boutlimit, samplelimit, popsize):
+	if simtype == 'genepop':
+		from_genepop = genePop(command_tuple[1])
+		virtual_population = (from_genepop[0],
+							command_tuple[-2],command_tuple[-1],
+							from_genepop[1],from_genepop[2],
+							from_genepop[3],from_genepop[4]
+							)
+
+	elif simtype == 'simulate':
+		virtual_genepool = virtualGenepool(command_tuple[1], command_tuple[2])
+		#print virtual_genepool
+		number_of_individuals = int(command_tuple[3])
+		virtual_population = (virtualPopulation(virtual_genepool, number_of_individuals),
+							command_tuple[-2],command_tuple[-1]
+							)
+	elif simtype == 'simfile':
+		input = infile
+		with open(input,'r') as o:
+			virtual_genepool = json.load(o)
+		#print virtual_genepool
+		code2loci_dictionary = {}
+		for loci_index in range(0,len(virtual_genepool.keys())):
+			loci_name = virtual_genepool.keys()[loci_index]
+			allele_keys = virtual_genepool[loci_name].keys()
+			for allele_code in allele_keys:
+				code2loci_dictionary[str(allele_code)] = str(loci_name)
+		number_of_individuals = int(popsize)
+		# built virtual population from JSON file
+		from_virtpop = virtualPopulation(virtual_genepool, number_of_individuals)
+		population_count = 1
+		population_dictionary = {population_count:[]}
+		He_input_dictionary = {}
+		sample_dictionary = {}
+		for virt_index in range(0,len(from_virtpop.keys())):
+			sample_name = from_virtpop.keys()[virt_index]
+			genotype_dictionary = from_virtpop[sample_name]
+			sample_genotype_list = []
+			loci_genotype_list = []
+			for allele_index in range(0,len(genotype_dictionary.keys())):
+				allele_id = genotype_dictionary.keys()[allele_index]
+				allele_list = genotype_dictionary[allele_id]
+				for code_index in range(0,len(allele_list)):
+					if sample_genotype_list == []:
+						sample_genotype_list = [''] * len(allele_list)
+					sample_genotype_list[code_index] = str(str(sample_genotype_list[code_index]) +
+												str(allele_list[code_index][0]))
+			for genotype in sample_genotype_list:
+				loci_name = code2loci_dictionary[genotype[:3]]
+				if loci_name in He_input_dictionary.keys():
+					He_input_dictionary[loci_name].append(genotype)
+				else:
+					He_input_dictionary[loci_name] = [genotype]
+			sample_dictionary[sample_name] = sample_genotype_list
+		population_dictionary[population_count] = sample_dictionary
+		virtual_population = (sorted(from_virtpop.keys()),
+							samplelimit,boutlimit,
+							[str(x) for x in virtual_genepool.keys()], population_count,
+							population_dictionary, He_input_dictionary,code2loci_dictionary
+							)
+	return virtual_population
+
 def virtualGenepool(loci_range, allele_range):
 	# creates a virtual pool of loci and alleles to draw from
 	loci_min = int(loci_range[0])
@@ -61,67 +123,6 @@ def buildGenotype(virtual_genepool):
 			alleleList.append((allele_name,allele_frequency))
 		individual[allele_id] = alleleList
 	return individual
-
-def assemblePopulation(simtype, infile, boutlimit, samplelimit, popsize):
-	if simtype == 'genepop':
-		from_genepop = genePop(command_tuple[1])
-		virtual_population = (from_genepop[0],
-							command_tuple[-2],command_tuple[-1],
-							from_genepop[1],from_genepop[2],
-							from_genepop[3],from_genepop[4]
-							)
-
-	elif simtype == 'simulate':
-		virtual_genepool = virtualGenepool(command_tuple[1], command_tuple[2])
-		#print virtual_genepool
-		number_of_individuals = int(command_tuple[3])
-		virtual_population = (virtualPopulation(virtual_genepool, number_of_individuals),
-							command_tuple[-2],command_tuple[-1]
-							)
-	elif simtype == 'simfile':
-		input = infile
-		with open(input,'r') as o:
-			virtual_genepool = json.load(o)
-		#print virtual_genepool
-		code2loci_dictionary = {}
-		for loci_index in range(0,len(virtual_genepool.keys())):
-			loci_name = virtual_genepool.keys()[loci_index]
-			allele_keys = virtual_genepool[loci_name].keys()
-			for allele_code in allele_keys:
-				code2loci_dictionary[str(allele_code)] = str(loci_name)
-		number_of_individuals = int(popsize)
-		from_virtpop = virtualPopulation(virtual_genepool, number_of_individuals)
-		population_count = 1
-		population_dictionary = {population_count:[]}
-		He_input_dictionary = {}
-		sample_dictionary = {}
-		for virt_index in range(0,len(from_virtpop.keys())):
-			sample_name = from_virtpop.keys()[virt_index]
-			genotype_dictionary = from_virtpop[sample_name]
-			sample_genotype_list = []
-			loci_genotype_list = []
-			for allele_index in range(0,len(genotype_dictionary.keys())):
-				allele_id = genotype_dictionary.keys()[allele_index]
-				allele_list = genotype_dictionary[allele_id]
-				for code_index in range(0,len(allele_list)):
-					if sample_genotype_list == []:
-						sample_genotype_list = [''] * len(allele_list)
-					sample_genotype_list[code_index] = str(str(sample_genotype_list[code_index]) +
-												str(allele_list[code_index][0]))
-			for genotype in sample_genotype_list:
-				loci_name = code2loci_dictionary[genotype[:3]]
-				if loci_name in He_input_dictionary.keys():
-					He_input_dictionary[loci_name].append(genotype)
-				else:
-					He_input_dictionary[loci_name] = [genotype]
-			sample_dictionary[sample_name] = sample_genotype_list
-		population_dictionary[population_count] = sample_dictionary
-		virtual_population = (sorted(from_virtpop.keys()),
-							samplelimit,boutlimit,
-							[str(x) for x in virtual_genepool.keys()], population_count,
-							population_dictionary, He_input_dictionary,code2loci_dictionary
-							)
-	return virtual_population
 
 def virtualPopulation(virtual_genepool, number_of_individuals):
 	sampleList = []
