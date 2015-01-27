@@ -93,13 +93,16 @@ def main(simdir, simlist):
 	if simlist.find('*') != -1:
 		sim_list = [x for x in list_dir if x.find('.csv') != -1 and x.find('_score.csv') == -1]
 	else:
-		sim_list = ast.literal_eval(simlist)
+		try:
+			sim_list = ast.literal_eval(simlist)
+		except:
+			sim_list = simlist.split(',') 
 	#sim_list = ['pairwise_error.csv', 'pairwise_full_noLW20.csv']
 
 	# input model data to be used for real data analysis if it exists
 	model_file = 'model_stats.tsv'
 	if model_file in list_dir:
-		model_input = pd.read_csv(sim_path + model_file, sep='\t', header=0, index_col=None, lineterminator='\n')
+		model_input = pd.read_csv(sim_path + '/' + model_file, sep='\t', header=0, index_col=None, lineterminator='\n')
 	else:
 		columns = ['file','y_dist_max',
 			'x_dist_max','x_dist_min','x_dist_mean','lower_bound','y_res_max',
@@ -111,6 +114,8 @@ def main(simdir, simlist):
 	# start main processing loop for each sim file
 	for file in sim_list:
 		print file
+		write2model = True
+
 		file = os.path.join(sim_path, file)
 		# open sim file
 		with open(file,'r') as f:
@@ -221,6 +226,7 @@ def main(simdir, simlist):
 			plt.plot([model_input.upper_bound.mean(),model_input.upper_bound.mean()],
 			[y_dist_max,0], linestyle='dashed', color='r'
 				)
+			write2model = False
 
 		# make histogram of resampled individuals
 		resampled_individual_df = score_df[(score_df.resampled == True)]
@@ -272,13 +278,14 @@ def main(simdir, simlist):
 					facecolor = 'y'
 				# plot a shaded area for the max resampled and min distinct
 				plt.axvspan(upper_bound, lower_bound, facecolor=facecolor, alpha=0.5)
+
 			
 		sim_model_data.append(sim_stats)
 
 		plt.xlim([-1,1])
 		plt.xlabel('score bins')
 		plt.ylabel('frequency')
-		plt.title(file.split('.')[0].split('/')[-1])
+		#plt.title(file.split('.')[0].split('/')[-1])
 		pp = PdfPages(file.rsplit('.',1)[0] + '.pdf')
 		pp.savefig(fig)
 		plt.clf()
@@ -315,9 +322,8 @@ def main(simdir, simlist):
 		pp.close()
 		plt.close('all')
 
-	write2model = False
 	if write2model == True:
-		with open(sim_path + 'model_stats.tsv','w') as o:
+		with open(sim_path + '/' + 'model_stats.tsv','w') as o:
 			o.write('\t'.join(['file','y_dist_max',
 				'x_dist_max','x_dist_min','x_dist_mean','lower_bound','y_res_max',
 				'x_res_max','x_res_min','x_res_mean','upper_bound']

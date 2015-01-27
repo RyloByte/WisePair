@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
-from random import randint
-from random import choice
+from random import randint, choice, sample
 from collections import Counter
 import sys
 import math
@@ -170,8 +169,9 @@ def genePop(genepop_file):
 			He_input_dictionary)
 
 def virtualSeason(virt_pop_tuple):
-	population, sample_limit, bout_limit = virt_pop_tuple
+	population, sample_limit, bout_limit, percent_present = virt_pop_tuple
 	print len(population),'individuals...'
+	print percent_present, 'percent are present for each bout...'
 	print 'sampling the population...'
 	print sample_limit, 'samples taken over',bout_limit,'bouts...'
 	season_list = []
@@ -179,7 +179,7 @@ def virtualSeason(virt_pop_tuple):
 	#temp_list = list(population)
 	for n in range(bout_limit):
 		bout_list = []
-		temp_list = list(population)
+		temp_list = present(population, percent_present)
 		# Warning at this point you must specify more 
 		# indivuduals then number of samples per bout
 		for m in range((sample_limit/bout_limit)):
@@ -188,6 +188,10 @@ def virtualSeason(virt_pop_tuple):
 			temp_list.pop(temp_list.index(sample))
 		season_list.append(bout_list)
 	return season_list
+
+def present(population, percent_present):
+	present_pop = sample(set(population), int(percent_present))
+	return present_pop
 
 def resampled(season_sample):
 	resampled_list = []
@@ -333,13 +337,13 @@ def getError(errfile):
 ###############################################################################################
 
 def main(simtype, infile, errfile, boutlimit,
-	samplelimit, popsize, outfile):
+	samplelimit, popsize, percentpresent, outfile):
 	# assemble the virtual population based on user specifications
 	# output object has virt pop, sample_limit, and bout limit
 	assemble_it = assemblePopulation(simtype, infile, boutlimit,
 		samplelimit, popsize
 		)
-	virtual_population = (assemble_it[0],int(assemble_it[1]),int(assemble_it[2]))
+	virtual_population = (assemble_it[0],int(assemble_it[1]),int(assemble_it[2]), percentpresent)
 	locus_name_list = assemble_it[3]
 	population_dictionary = assemble_it[5]
 	# collect virtual samples over a season
@@ -348,7 +352,7 @@ def main(simtype, infile, errfile, boutlimit,
 	ADO_rate_dictionary, FA_rate_dictionary = getError(errfile)
 
 	code2loci_dictionary = assemble_it[7]
-	population, sample_limit, bout_limit = virtual_population
+	population, sample_limit, bout_limit, percent_present = virtual_population
 	#save_file_name = 'P{0}_SL{1}_BL{2}.csv'.format(unicode(str(len(population)),'utf-8'),
 	#											unicode(str(sample_limit),'utf-8'),
 	#											unicode(str(bout_limit),'utf-8'))
@@ -421,6 +425,10 @@ if __name__ == '__main__':
 	parser.add_argument('-p','--popsize', help='Specify the size of a virtual population.', 
 		required=True
 		)
+	parser.add_argument('-r','--percentpresent',
+		help='Percent of population present at each sampling [default = 100]', 
+		required=False, default=100
+		)
 	parser.add_argument('-o','--outfile', help='Specify the output file.', 
 		required=True
 		)
@@ -429,7 +437,8 @@ if __name__ == '__main__':
 	if len(sys.argv) < 7:
 		sys.exit("Missing flags, type \"--help\" for assistance...")
 	main(args['simtype'], args['infile'],args['errfile'],
-		args['boutlimit'],args['samplelimit'],args['popsize'],args['outfile']
+		args['boutlimit'],args['samplelimit'],args['popsize'],args['percentpresent'],
+		args['outfile']
 		)
 
 

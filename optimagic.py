@@ -130,7 +130,7 @@ def main(simdir, popsize, sampran, boutran, resampmin,
 				round(sim_stats_mean[0],2), round(sim_stats_mean[1],2), round(sim_stats_mean[2],2),
 				round(sim_stats_mean[3],2)
 				]
-	good_sim_stats_df.to_csv('optimagic_output.txt')
+	good_sim_stats_df.to_csv('optimagic_output.csv')
 	other_sim_stats_df.to_csv('optimagic_output_BAD.csv')
 
 
