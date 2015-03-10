@@ -40,12 +40,12 @@ def set_simdir(simdir, om_dir_name):
 		makedirs(om_work_dir)
 	return om_work_dir
 
-def run_sim(simdir, simtype, simfile, errfile, popsize, samplim, boutlim, iterlim):
+def run_sim(simdir, simtype, simfile, errfile, popsize, perpop, samplim, boutlim, iterlim):
 	print 'Running BeanBag simulations...\n'
 	om_work_dir = set_simdir(simdir, 'OM_simdir')
-	outfile = join(om_work_dir, ''.join(['P',popsize,'_S',samplim,'_B',boutlim]))
+	outfile = join(om_work_dir, ''.join(['P',popsize,'_S',samplim,'_B',boutlim,'_R', perpop]))
 	run = Popen(['python', 'simerator.py', '-t',simtype,'-i',simfile,
-			'-e', errfile,'-p',popsize,'-s',samplim,'-b',boutlim,
+			'-e', errfile,'-p',popsize, '-r',perpop,'-s',samplim,'-b',boutlim,
 			'-m',iterlim,'-o',outfile], stdout=PIPE)
 	run.stdout.read()
 	return om_work_dir
@@ -55,12 +55,12 @@ def run_wise(simdir, simlist):
 	run = Popen(['python', 'wise_pair.py', '-s', simdir, '-l', str(simlist)], stdout=PIPE)
 	run.stdout.read()
 	
-def optimaker(simdir, popsize, samplim, boutlim, resampmin, nummin, 
+def optimaker(simdir, popsize, perpop, samplim, boutlim, resampmin, nummin, 
 	runsim, iterlim, simtype, simfile, errfile
 	):
 	if runsim == 'True':
 		om_work_dir = run_sim(simdir, simtype, simfile, errfile, 
-			popsize, samplim, boutlim, iterlim
+			popsize, perpop, samplim, boutlim, iterlim
 			)
 		simdir = om_work_dir
 		simdir_list = [join(simdir, x) for x in listdir(simdir) if x.find('_score.csv') == -1 and
@@ -88,7 +88,7 @@ def optimaker(simdir, popsize, samplim, boutlim, resampmin, nummin,
 	print '\n\n'
 	return find_resampled[1]
 
-def main(simdir, popsize, sampran, boutran, resampmin,
+def main(simdir, popsize, perpop, sampran, boutran, resampmin,
 	numminran, runsim, iterlim, simtype, simfile, errfile
 	):
 	if sampran.find(',') != -1:
@@ -118,7 +118,7 @@ def main(simdir, popsize, sampran, boutran, resampmin,
 		boutlim = str(range_tuple[1])
 		samplim = str(int(range_tuple[0]) * int(boutlim))
 		nummin = str(range_tuple[2])
-		sim_stats_mean = optimaker(simdir, popsize, samplim, boutlim, resampmin, nummin, 
+		sim_stats_mean = optimaker(simdir, popsize, perpop, samplim, boutlim, resampmin, nummin, 
 			runsim, iterlim, simtype, simfile, errfile)
 		if (sim_stats_mean[2] >= int(resampmin) and sim_stats_mean[3] >= int(nummin)):
 			good_sim_stats_df.loc[len(good_sim_stats_df) + 1] = [popsize, samplim, boutlim, resampmin, nummin,
@@ -143,6 +143,9 @@ if __name__ == '__main__':
 		)
 	parser.add_argument('-p','--popsize', help='population size.', 
 		required=True
+		)
+	parser.add_argument('-x','--perpop', help='population size present at site.', 
+		required=False, default=100
 		)
 	parser.add_argument('-l','--sampran', help='range of samples per bout.', 
 		required=True
@@ -175,7 +178,7 @@ if __name__ == '__main__':
 	# check to make sure that enough arguments were passed before proceeding
 	if len(sys.argv) < 2:
 		sys.exit("Missing flags, type \"--help\" for assistance...")
-	main(args['simdir'], args['popsize'], args['sampran'], args['boutran'],
+	main(args['simdir'], args['popsize'], args['perpop'], args['sampran'], args['boutran'],
 		args['resampmin'], args['numminran'], args['runsim'], args['iterlim'],
 		args['simtype'], args['simfile'], args['errfile']
 		)

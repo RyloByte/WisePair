@@ -4,11 +4,11 @@ import argparse
 
 
 def main(simtype, infile, errfile, boutlimit,
-	samplelimit, popsize, outfile, iterations):
+	samplelimit, popsize, perpop, perbout, outfile, iterations):
 	for i in range(0,int(iterations)):
 		print i
 		run = Popen(['python', 'BeanBag.py', '-t',simtype,'-i',infile,'-e', errfile,
-			'-p',popsize,'-s',samplelimit,'-b',boutlimit,'-o',
+			'-p',popsize, '-r', perpop,'-l',perbout, '-s',samplelimit,'-b',boutlimit,'-o',
 			outfile + '_I' + str(i) + '.csv'], stdout=PIPE)
 		print run.stdout.read()
 
@@ -35,6 +35,12 @@ if __name__ == '__main__':
 	parser.add_argument('-p','--popsize', help='Specify the size of a virtual population.', 
 		required=True
 		)
+	parser.add_argument('-r','--perpop', help='Specify the percent of a population present at bout.', 
+		required=False, default=100
+		)
+	parser.add_argument('-l','--perbout', help='Number of samples for each bout.', 
+		required=True, default=False
+		)
 	parser.add_argument('-o','--outfile', help='Specify the output file.', 
 		required=True
 		)
@@ -46,5 +52,5 @@ if __name__ == '__main__':
 	if len(sys.argv) < 7:
 		sys.exit("Missing flags, type \"--help\" for assistance...")
 	main(args['simtype'], args['infile'], args['errfile'], args['boutlimit'], args['samplelimit'],
-		args['popsize'], args['outfile'], args['iterations']
+		args['popsize'], args['perpop'],args['perbout'], args['outfile'], args['iterations']
 		)
