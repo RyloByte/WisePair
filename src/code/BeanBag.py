@@ -9,22 +9,23 @@ import argparse
 
 
 def assemblepopulation(simtype, infile, popsize):
-    if simtype == 'genepop':
-        from_genepop = genePop(command_tuple[1])
-        virtual_population = (from_genepop[0],
-                            command_tuple[-2],command_tuple[-1],
-                            from_genepop[1],from_genepop[2],
-                            from_genepop[3],from_genepop[4]
-                            )
+    #TODO: we don't use these, but they should be implimented some day [Ryan 03/17/2015]
+    #if simtype == 'genepop':
+    #    from_genepop = genePop(command_tuple[1])
+    #    virtual_population = (from_genepop[0],
+    #                        command_tuple[-2],command_tuple[-1],
+    #                        from_genepop[1],from_genepop[2],
+    #                        from_genepop[3],from_genepop[4]
+    #                        )
 
-    elif simtype == 'simulate':
-        virtual_genepool = virtualGenepool(command_tuple[1], command_tuple[2])
-        #print virtual_genepool
-        number_of_individuals = int(command_tuple[3])
-        virtual_population = (virtualPopulation(virtual_genepool, number_of_individuals),
-                            command_tuple[-2],command_tuple[-1]
-                            )
-    elif simtype == 'simfile':
+    #elif simtype == 'simulate':
+    #    virtual_genepool = virtualGenepool(command_tuple[1], command_tuple[2])
+    #    #print virtual_genepool
+    #    number_of_individuals = int(command_tuple[3])
+    #    virtual_population = (virtualPopulation(virtual_genepool, number_of_individuals),
+    #                        command_tuple[-2],command_tuple[-1]
+    #                        )
+    if simtype == 'simfile':
         input = infile
         with open(input,'r') as o:
             virtual_genepool = json.load(o)
@@ -67,7 +68,7 @@ def assemblepopulation(simtype, infile, popsize):
                             [str(x) for x in virtual_genepool.keys()], population_count,
                             population_dictionary, He_input_dictionary,code2loci_dictionary
                             )
-    return virtual_population
+        return virtual_population
 
 def virtualGenepool(loci_range, allele_range):
     # creates a virtual pool of loci and alleles to draw from
@@ -133,6 +134,9 @@ def virtualPopulation(virtual_genepool, number_of_individuals):
     return  virtual_population
 
 def genePop(genepop_file):
+    """
+    :rtype : tuple
+    """
     locus_name_list = []
     population_count = 0
     population_dictionary = {}
