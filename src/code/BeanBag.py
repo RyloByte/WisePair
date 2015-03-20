@@ -10,6 +10,7 @@ import argparse
 
 def assemblepopulation(simtype, infile, popsize):
     #TODO: we don't use these, but they should be implimented some day [Ryan 03/17/2015]
+    #send to github
     #if simtype == 'genepop':
     #    from_genepop = genePop(command_tuple[1])
     #    virtual_population = (from_genepop[0],
