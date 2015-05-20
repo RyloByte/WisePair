@@ -24,13 +24,14 @@ def count_resampled(simdir_list, resampmin, nummin):
         sample_1_list = [x.rsplit('_', 1)[0] for x in resampled_df.sample_1]
         count_tup_list = [(x, sample_1_list.count(x)) for x in set(sample_0_list)
             ]
-        resamp_count_df = pd.DataFrame(count_tup_list, 
-            columns=['virtsim_id', 'resample_count']
-            )
-        test_resamples = resamp_count_df[resamp_count_df['resample_count'] >= int(nummin)]
-        stats_df.loc[len(stats_df)] = [len(resamp_count_df), round(resamp_count_df.resample_count.mean(),1),
-            len(test_resamples), round(test_resamples.resample_count.mean(),1)
-            ]
+        if count_tup_list != []:
+            resamp_count_df = pd.DataFrame(count_tup_list,
+                columns=['virtsim_id', 'resample_count']
+                )
+            test_resamples = resamp_count_df[resamp_count_df['resample_count'] >= int(nummin)]
+            stats_df.loc[len(stats_df)] = [len(resamp_count_df), round(resamp_count_df.resample_count.mean(),1),
+                len(test_resamples), round(test_resamples.resample_count.mean(),1)
+                ]
     stats_df.fillna(0, inplace=True)
     return stats_df, stats_df.mean()
 
@@ -41,7 +42,8 @@ def set_simdir(simdir, om_dir_name):
     return om_work_dir
 
 def run_sim(simdir, simtype, simfile, errfile, popsize, perpop, samplim, boutlim, iterlim):
-    print 'Running BeanBag simulations...\n'
+    print 'Using Simerator to run %s iterations...' % str(iterlim)
+    print 'Running BeanBag simulations...'
     om_work_dir = set_simdir(simdir, 'OM_simdir')
     outfile = join(om_work_dir, ''.join(['P',popsize,'_S',samplim,'_B',boutlim,'_R', perpop]))
     run = Popen(['python', 'simerator.py', '-t',simtype,'-i',simfile,
@@ -130,8 +132,8 @@ def main(simdir, popsize, perpop, sampran, boutran, resampmin,
                 round(sim_stats_mean[0],2), round(sim_stats_mean[1],2), round(sim_stats_mean[2],2),
                 round(sim_stats_mean[3],2)
                 ]
-    good_sim_stats_df.to_csv('optimagic_output.csv')
-    other_sim_stats_df.to_csv('optimagic_output_BAD.csv')
+    good_sim_stats_df.to_csv(simdir + '/optimagic_output.csv')
+    other_sim_stats_df.to_csv(simdir + '/optimagic_output_BAD.csv')
 
 
 

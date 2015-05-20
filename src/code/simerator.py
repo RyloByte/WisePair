@@ -8,7 +8,7 @@ def main(simtype, infile, errfile, boutlimit,
     for i in range(0,int(iterations)):
         print i
         run = Popen(['python', 'BeanBag.py', '-t',simtype,'-i',infile,'-e', errfile,
-            '-p',popsize, '-r', perpop,'-l',perbout, '-s',samplelimit,'-b',boutlimit,'-o',
+            '-p',popsize, '-r', perpop,'-l',str(perbout), '-s',samplelimit,'-b',boutlimit,'-o',
             outfile + '_I' + str(i) + '.csv'], stdout=PIPE)
         print run.stdout.read()
 
@@ -36,10 +36,10 @@ if __name__ == '__main__':
         required=True
         )
     parser.add_argument('-r','--perpop', help='Specify the percent of a population present at bout.', 
-        required=False, default=100
+        required=False, default=1
         )
     parser.add_argument('-l','--perbout', help='Number of samples for each bout.', 
-        required=True, default=False
+        required=False, default=False
         )
     parser.add_argument('-o','--outfile', help='Specify the output file.', 
         required=True

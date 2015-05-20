@@ -176,7 +176,7 @@ def virtualSeason(virt_pop_tuple):
     print len(population),'individuals...'
     print int(percent_present)*100, 'percent are present for each bout...'
     print 'sampling the population...'
-    if per_bout != False:
+    if per_bout != 'False':
         per_bout = per_bout.split(',')
         season_list = []
         # use this temp list for no resamples
@@ -363,7 +363,7 @@ def main(simtype, infile, errfile, boutlimit,
     # output object has virt pop, sample_limit, and bout limit
     assemble_it = assemblepopulation(simtype, infile, popsize
         )
-    virtual_population = (assemble_it[0], perbout, int(samplelimit), int(boutlimit), percentpresent)
+    virtual_population = (assemble_it[0], str(perbout), int(samplelimit), int(boutlimit), percentpresent)
     locus_name_list = assemble_it[1]
     print locus_name_list
     population_dictionary = assemble_it[3]
@@ -444,7 +444,7 @@ if __name__ == '__main__':
         required=True
         )
     parser.add_argument('-l','--perbout', help='Number of samples for each bout. [default = False]',
-        required=False, default=False
+        required=False, default='False'
         )
     parser.add_argument('-p','--popsize', help='Specify the size of a virtual population.', 
         required=True
