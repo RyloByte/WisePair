@@ -331,7 +331,6 @@ def main(simdir, simlist):
             resample_list = [sorted([str(x[0]), str(x[1])])[0] + ' -> ' + sorted([str(x[0]), str(x[1])])[1] + ' = ' + str(x[2])
                              for x in zip(resampled_individual_df.sample_0, resampled_individual_df.sample_1, resampled_individual_df.corrected_score)
                              ]
-            print resampled_individual_df
             quant_res_in.columns = ['num_indv', 'num_resamp']
             quant_double_group = quant_res_in.groupby(['num_resamp']
             )['num_indv'].count().reset_index()
