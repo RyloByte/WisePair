@@ -443,15 +443,15 @@ if __name__ == '__main__':
     parser.add_argument('-s','--samplelimit', help='Total number of samples for a season.', 
         required=True
         )
-    parser.add_argument('-l','--perbout', help='Number of samples for each bout.', 
-        required=True, default=False
+    parser.add_argument('-l','--perbout', help='Number of samples for each bout. [default = False]',
+        required=False, default=False
         )
     parser.add_argument('-p','--popsize', help='Specify the size of a virtual population.', 
         required=True
         )
     parser.add_argument('-r','--percentpresent',
-        help='Percent of population present at each sampling [default = 100]', 
-        required=False, default=100
+        help='Population present at each sampling between 0-1 [default = 1]',
+        required=False, default=1
         )
     parser.add_argument('-o','--outfile', help='Specify the output file.', 
         required=True
