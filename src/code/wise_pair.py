@@ -139,7 +139,7 @@ def main(simdir, simlist):
     sim_model_data = []
 
     # start main processing loop for each sim file
-    #  Magic value to write model file or not, usually should be True
+    # Magic value to write model file or not, usually should be True
     write2model = False
 
     for file in sim_list:
@@ -323,14 +323,18 @@ def main(simdir, simlist):
         #  Make second figure of confident resamples, i.e., on the left of lowest bound
         if found_resamples != 0:
             fig, ax = plt.subplots()
-            resampled_individual_df = resampled_individual_df.loc[(resampled_individual_df.corrected_score <= resample_threshold)].sort(['corrected_score'], ascending=[True])
+            resampled_individual_df = resampled_individual_df.loc[
+                (resampled_individual_df.corrected_score <= resample_threshold)].sort(['corrected_score'],
+                                                                                      ascending=[True])
             quant_res_in = pd.DataFrame(resampled_individual_df.groupby(['general_sample']
             )['general_sample'].count())
             quant_res_in.columns = ['count']
             quant_res_in = quant_res_in.reset_index()
-            resample_list = [sorted([str(x[0]), str(x[1])])[0] + ' -> ' + sorted([str(x[0]), str(x[1])])[1] + ' = ' + str(x[2])
-                             for x in zip(resampled_individual_df.sample_0, resampled_individual_df.sample_1, resampled_individual_df.corrected_score)
-                             ]
+            resample_list = [
+                sorted([str(x[0]), str(x[1])])[0] + ' -> ' + sorted([str(x[0]), str(x[1])])[1] + ' = ' + str(x[2])
+                for x in zip(resampled_individual_df.sample_0, resampled_individual_df.sample_1,
+                             resampled_individual_df.corrected_score)
+                ]
             quant_res_in.columns = ['num_indv', 'num_resamp']
             quant_double_group = quant_res_in.groupby(['num_resamp']
             )['num_indv'].count().reset_index()
@@ -377,5 +381,5 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     # check to make sure that enough arguments were passed before proceeding
     # if len(sys.argv) < 2:
-    #    sys.exit("Missing flags, type \"--help\" for assistance...")
+    # sys.exit("Missing flags, type \"--help\" for assistance...")
     main(args['simdir'], args['simlist'])

@@ -7,7 +7,7 @@ model = pd.read_csv(sys.argv[2], sep='\t')
 
 upper_bound = model.upper_bound.mean()
 
-#file = file[file['corrected_score'] <= upper_bound]
+# file = file[file['corrected_score'] <= upper_bound]
 #samp_tup_list = sorted([sorted(set(x[0] + x[1])) for x in 
 #	itertools.combinations(list(zip(file.sample_0,file.sample_1)),2
 #	) if len(set(x[0] + x[1])) == 3]
