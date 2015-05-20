@@ -139,7 +139,8 @@ def main(simdir, simlist):
     sim_model_data = []
 
     # start main processing loop for each sim file
-    write2model = True
+    #  Magic value to write model file or not, usually should be True
+    write2model = False
 
     for file in sim_list:
         print file
@@ -308,7 +309,10 @@ def main(simdir, simlist):
                 plt.axvspan(upper_bound, lower_bound, facecolor=facecolor, alpha=0.5)
 
         sim_model_data.append(sim_stats)
-
+        if sim_OR_not == True:
+            resample_threshold = min([upper_bound, lower_bound])
+        elif sim_OR_not == False:
+            resample_threshold = min([model_input.upper_bound.mean(), model_input.lower_bound.mean()])
         #plt.xlim([-1,1])
         plt.xlabel('score bins')
         plt.ylabel('frequency')
@@ -316,16 +320,18 @@ def main(simdir, simlist):
         pp = PdfPages(file.rsplit('.', 1)[0] + '.pdf')
         pp.savefig(fig)
         plt.clf()
-
+        #  Make second figure of confident resamples, i.e., on the left of lowest bound
         if found_resamples != 0:
             fig, ax = plt.subplots()
+            resampled_individual_df = resampled_individual_df.loc[(resampled_individual_df.corrected_score <= resample_threshold)].sort(['corrected_score'], ascending=[True])
             quant_res_in = pd.DataFrame(resampled_individual_df.groupby(['general_sample']
             )['general_sample'].count())
             quant_res_in.columns = ['count']
             quant_res_in = quant_res_in.reset_index()
-            resample_list = [str(x[0]) + ' ' + str(x[1])
-                             for x in zip(quant_res_in.general_sample, quant_res_in['count'])
+            resample_list = [sorted([str(x[0]), str(x[1])])[0] + ' -> ' + sorted([str(x[0]), str(x[1])])[1] + ' = ' + str(x[2])
+                             for x in zip(resampled_individual_df.sample_0, resampled_individual_df.sample_1, resampled_individual_df.corrected_score)
                              ]
+            print resampled_individual_df
             quant_res_in.columns = ['num_indv', 'num_resamp']
             quant_double_group = quant_res_in.groupby(['num_resamp']
             )['num_indv'].count().reset_index()
@@ -342,8 +348,8 @@ def main(simdir, simlist):
             plt.yticks(np.arange(0, y_max + 2, 1))
             plt.xlabel('# of resamples/individual')
             plt.ylabel('# of individuals resampled')
-            ax.text(x_max + 0.25, 0.25, '\n'.join(resample_list), style='italic',
-                    bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
+            ax.text(x_max + 0.08, 0.75, '\n'.join(resample_list), style='italic',
+                    bbox={'facecolor': 'white', 'alpha': 0.5, 'pad': 10})
             pp.savefig(fig)
             plt.clf()
         pp.close()
