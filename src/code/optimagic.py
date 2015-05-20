@@ -147,7 +147,7 @@ if __name__ == '__main__':
         required=True
         )
     parser.add_argument('-x','--perpop', help='population size present at site.', 
-        required=False, default=100
+        required=False, default=1
         )
     parser.add_argument('-l','--sampran', help='range of samples per bout.', 
         required=True

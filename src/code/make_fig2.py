@@ -22,4 +22,4 @@ ymax = data.tot_resamp.max() + data.tot_resamp.max()*0.1
 plt.xlim(xmin, xmax)
 plt.ylim(ymin, ymax)
 plt.xlabel('total number of samples')
-plt.savefig('first_try.pdf')
+plt.savefig('fig2.pdf')
