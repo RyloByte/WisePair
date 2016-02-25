@@ -47,10 +47,10 @@ def run_sim(simdir, simtype, simfile, errfile, popsize, perpop, samplim, boutlim
     print 'Using Simerator to run %s iterations...' % str(iterlim)
     print 'Running BeanBag simulations...'
     om_work_dir = set_simdir(simdir, 'OM_simdir')
-    outfile = join(om_work_dir, ''.join(['P', popsize, '_S', samplim, '_B', boutlim, '_R', perpop]))
+    outfile = join(om_work_dir, ''.join(['P', str(popsize), '_S', str(samplim), '_B', str(boutlim), '_R', str(perpop)]))
     run = Popen(['python', 'simerator.py', '-t', simtype, '-i', simfile,
-                 '-e', errfile, '-p', popsize, '-r', perpop, '-s', samplim, '-b', boutlim,
-                 '-m', iterlim, '-o', outfile], stdout=PIPE)
+                 '-e', errfile, '-p', str(popsize), '-r', str(perpop), '-s', str(samplim), '-b', str(boutlim),
+                 '-m', str(iterlim), '-o', str(outfile)], stdout=PIPE)
     run.stdout.read()
     return om_work_dir
 

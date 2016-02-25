@@ -141,6 +141,9 @@ def main(simdir, simlist):
     # start main processing loop for each sim file
     # Magic value to write model file or not, usually should be True
     write2model = False
+    corr_Or_norm = 'normalized_score'
+    #corr_Or_norm = 'corrected_score'
+
 
     for file in sim_list:
         print file
@@ -181,7 +184,7 @@ def main(simdir, simlist):
             # if it is real data use the model file to check if there is a possible resample
             # a model file must exist for this to work properly
             if sim_OR_not == False:
-                resampled.append(True if score_df.xs(index)['corrected_score'] <
+                resampled.append(True if score_df.xs(index)[corr_Or_norm] <
                                          model_input.lower_bound.mean() else False
                                  )
             # else it is a sims file and is checked for resamples
@@ -195,19 +198,19 @@ def main(simdir, simlist):
         # make histogram of distinct individuals
         sim_stats = []
         distinct_individual_df = score_df[(score_df.resampled == False)]
-        group_dist_in = pd.DataFrame(distinct_individual_df.groupby(['corrected_score']
-        )['corrected_score'].count())
+        group_dist_in = pd.DataFrame(distinct_individual_df.groupby([corr_Or_norm]
+        )[corr_Or_norm].count())
         group_dist_in.columns = ['count']
         group_dist_in = group_dist_in.reset_index()
         fig, ax = plt.subplots()
         # get stats for dist data
         y_dist_max = group_dist_in['count'].max()
-        x_dist_max = group_dist_in['corrected_score'].max()
-        x_dist_min = group_dist_in['corrected_score'].min()
-        x_dist_mean = np.mean(group_dist_in['corrected_score'])
-        x_dist_se = scipy.stats.sem(group_dist_in['corrected_score'])
-        x_dist_count = group_dist_in['corrected_score'].count()
-        n = len(group_dist_in['corrected_score'])
+        x_dist_max = group_dist_in[corr_Or_norm].max()
+        x_dist_min = group_dist_in[corr_Or_norm].min()
+        x_dist_mean = np.mean(group_dist_in[corr_Or_norm])
+        x_dist_se = scipy.stats.sem(group_dist_in[corr_Or_norm])
+        x_dist_count = group_dist_in[corr_Or_norm].count()
+        n = len(group_dist_in[corr_Or_norm])
         confidence = 0.95
         x_dist_95_conf = x_dist_se * sp.stats.t._ppf((1 + confidence) / 2., n - 1)
         lower_bound = x_dist_min - x_dist_95_conf
@@ -217,17 +220,17 @@ def main(simdir, simlist):
                          str(x_dist_max), str(x_dist_min), str(x_dist_mean),
                          str(lower_bound)
                          ]
-            bins = group_dist_in.corrected_score
+            bins = group_dist_in[corr_Or_norm]
             width = 0.7 * (bins[1] - bins[0])
             center = (bins[:-1] + bins[1:]) / 2
-            plt.bar(group_dist_in.corrected_score, group_dist_in['count'],
+            plt.bar(group_dist_in[corr_Or_norm], group_dist_in['count'],
                     align='center', width=width, color='b'
                     )
             plt.plot([lower_bound, lower_bound], [y_dist_max, 0], linestyle='dashed', color='b')
 
         # work with the Andrew's real data
         elif sim_OR_not == False:
-            hist, bins = np.histogram(distinct_individual_df.corrected_score, bins=20)
+            hist, bins = np.histogram(distinct_individual_df[corr_Or_norm], bins=20)
             width = 0.7 * (bins[1] - bins[0])
             center = (bins[:-1] + bins[1:]) / 2
             colors = []
@@ -240,7 +243,7 @@ def main(simdir, simlist):
             plt.bar(center, hist, align='center',
                     width=width, color=colors
                     )
-            bins = group_dist_in['corrected_score']
+            bins = group_dist_in[corr_Or_norm]
             # determine color of shaded area
             if model_input.upper_bound.mean() <= model_input.lower_bound.mean():
                 facecolor = 'g'
@@ -264,8 +267,8 @@ def main(simdir, simlist):
         resampled_individual_df['general_sample'] = general_sample
         found_resamples = resampled_individual_df.shape[0]
         if found_resamples != 0:
-            group_res_in = pd.DataFrame(resampled_individual_df.groupby(['corrected_score']
-            )['corrected_score'].count())
+            group_res_in = pd.DataFrame(resampled_individual_df.groupby([corr_Or_norm]
+            )[corr_Or_norm].count())
             group_res_in.columns = ['count']
             group_res_in = group_res_in.reset_index()
 
@@ -275,24 +278,24 @@ def main(simdir, simlist):
             quant_res_in = quant_res_in.reset_index()
             # get stats for res data
             y_res_max = group_res_in['count'].max()
-            x_res_max = group_res_in['corrected_score'].max()
-            x_res_min = group_res_in['corrected_score'].min()
-            x_res_mean = group_res_in['corrected_score'].mean()
+            x_res_max = group_res_in[corr_Or_norm].max()
+            x_res_min = group_res_in[corr_Or_norm].min()
+            x_res_mean = group_res_in[corr_Or_norm].mean()
             if sim_OR_not == True:
-                x_res_se = scipy.stats.sem(group_res_in['corrected_score'])
+                x_res_se = scipy.stats.sem(group_res_in[corr_Or_norm])
                 if math.isnan(x_res_se) == True:
                     x_res_std = 0
-                x_res_count = group_res_in['corrected_score'].count()
-                n = len(group_res_in['corrected_score'])
+                x_res_count = group_res_in[corr_Or_norm].count()
+                n = len(group_res_in[corr_Or_norm])
                 confidence = 0.95
                 x_res_95_conf = x_res_se * sp.stats.t._ppf((1 + confidence) / 2., n - 1)
                 upper_bound = x_res_max + x_res_95_conf
                 sim_stats = sim_stats + [str(y_res_max), str(x_res_max), str(x_res_min),
                                          str(x_res_mean), str(upper_bound)
                                          ]
-            bins = group_res_in['corrected_score']
+            bins = group_res_in[corr_Or_norm]
             # plot the histogram data for resampled
-            plt.bar(group_res_in.corrected_score, group_res_in['count'],
+            plt.bar(group_res_in[corr_Or_norm], group_res_in['count'],
                     align='center', width=width, color='r'
                     )
             # determine color of shaded area
@@ -324,16 +327,16 @@ def main(simdir, simlist):
         if found_resamples != 0:
             fig, ax = plt.subplots()
             resampled_individual_df = resampled_individual_df.loc[
-                (resampled_individual_df.corrected_score <= resample_threshold)].sort(['corrected_score'],
+                (resampled_individual_df[corr_Or_norm] <= resample_threshold)].sort_values([corr_Or_norm],
                                                                                       ascending=[True])
             quant_res_in = pd.DataFrame(resampled_individual_df.groupby(['general_sample']
             )['general_sample'].count())
             quant_res_in.columns = ['count']
             quant_res_in = quant_res_in.reset_index()
             resample_list = [
-                sorted([str(x[0]), str(x[1])])[0] + ' -> ' + sorted([str(x[0]), str(x[1])])[1] + ' = ' + str(x[2])
+                sorted([str(x[0]), str(x[1])])[0] + ' -> ' + sorted([str(x[0]), str(x[1])])[1] + ' = ' + str("%.2f" % round(x[2],2))
                 for x in zip(resampled_individual_df.sample_0, resampled_individual_df.sample_1,
-                             resampled_individual_df.corrected_score)
+                             resampled_individual_df[corr_Or_norm])
                 ]
             quant_res_in.columns = ['num_indv', 'num_resamp']
             quant_double_group = quant_res_in.groupby(['num_resamp']

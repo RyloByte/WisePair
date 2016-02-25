@@ -179,7 +179,7 @@ def genePop(genepop_file):
 def virtualSeason(virt_pop_tuple):
     population, per_bout, sample_limit, bout_limit, percent_present = virt_pop_tuple
     print len(population), 'individuals...'
-    print int(percent_present) * 100, 'percent are present for each bout...'
+    print float(percent_present) * 100, 'percent are present for each bout...'
     print 'sampling the population...'
     if per_bout != 'False':
         per_bout = per_bout.split(',')
