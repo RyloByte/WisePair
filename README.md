@@ -1,6 +1,11 @@
 ###**WISEPAIR**
 * * *
 ####What is it used for?
-This project was created to help solve two mains issues.  
-1) Sampling scheme parameters to resample a set number of individuals.  
-2) Identify individuals who may have been resampled throughout a sampling season.  
+Wisepair is a set of python scripts built to address two issues in individual-based 
+genetic tracking studies.  
+1) Sampling scheme design to maximize resampling a set number of individuals.  
+2) Confidently identifying individuals who have been resampled in a data-set.  
+* * *
+
+
+
