@@ -9,27 +9,11 @@ import argparse
 
 
 def assemblepopulation(simtype, infile, popsize):
-    # TODO: we don't use these, but they should be implimented some day [Ryan 03/17/2015]
-    #if simtype == 'genepop':
-    #    from_genepop = genePop(command_tuple[1])
-    #    virtual_population = (from_genepop[0],
-    #                        command_tuple[-2],command_tuple[-1],
-    #                        from_genepop[1],from_genepop[2],
-    #                        from_genepop[3],from_genepop[4]
-    #                        )
-
-    #elif simtype == 'simulate':
-    #    virtual_genepool = virtualGenepool(command_tuple[1], command_tuple[2])
-    #    #print virtual_genepool
-    #    number_of_individuals = int(command_tuple[3])
-    #    virtual_population = (virtualPopulation(virtual_genepool, number_of_individuals),
-    #                        command_tuple[-2],command_tuple[-1]
-    #                        )
     if simtype == 'simfile':
         input = infile
         with open(input, 'r') as o:
             virtual_genepool = json.load(o)
-        #print virtual_genepool
+        # print virtual_genepool
         code2loci_dictionary = {}
         for loci_index in range(0, len(virtual_genepool.keys())):
             loci_name = virtual_genepool.keys()[loci_index]
@@ -67,7 +51,7 @@ def assemblepopulation(simtype, infile, popsize):
         virtual_population = (sorted(from_virtpop.keys()),
                               [str(x) for x in virtual_genepool.keys()], population_count,
                               population_dictionary, He_input_dictionary, code2loci_dictionary
-        )
+                              )
         return virtual_population
 
 
@@ -137,45 +121,6 @@ def virtualPopulation(virtual_genepool, number_of_individuals):
     return virtual_population
 
 
-def genePop(genepop_file):
-    """
-    :rtype : tuple
-    """
-    locus_name_list = []
-    population_count = 0
-    population_dictionary = {}
-    virtual_population = []
-    He_input_dictionary = {}
-    with open(genepop_file, 'r+') as file:
-        file_contents = file.read().splitlines()
-    for line in file_contents:
-        line = line.lower()
-        if 'title' in line:
-            file_description = line.split('\"')[1]
-        elif 'pop' not in line:
-            if population_count == 0:
-                locus_name_list.append(line)
-                He_input_dictionary[line] = []
-            else:
-                sample = line.split(',\t')[0]
-                genotypes = line.split(',\t')[1].split('\t')
-                for index in range(0, len(genotypes)):
-                    genotype = genotypes[index]
-                    He_input_dictionary[locus_name_list[index]].append(genotype)
-                sample_pool_id = str(population_count) + '_' + str(sample)
-                virtual_population.append(sample_pool_id)
-                if population_count in population_dictionary.keys():
-                    population_dictionary[population_count].append((sample, genotypes))
-                else:
-                    population_dictionary[population_count] = [(sample, genotypes)]
-        elif 'pop' in line:
-            population_count += 1
-
-    return (virtual_population, locus_name_list,
-            population_count, population_dictionary,
-            He_input_dictionary)
-
-
 def virtualSeason(virt_pop_tuple):
     population, per_bout, sample_limit, bout_limit, percent_present = virt_pop_tuple
     print len(population), 'individuals...'
@@ -237,103 +182,19 @@ def resampled(season_sample):
     return multiplicity_resampled_dictionary
 
 
-def geno_cat_calc(He, E1, E2):
-    # no dropout
-    p0 = (1 - E1) ** 2
-    # single dropout
-    p1 = E1 * (1 - E1)
-    # no false allele
-    f0 = (1 - E2) ** 2
-    # single false allele
-    f1 = E2 * (1 - E2)
-    # double false allele
-    f2 = E2 ** 2
-    # expected frequencies of catigories
-    # read as [true genotype]_[observed genotype], ex AA_AA
-    AA_AA = ((1 - He) * ((p0 ** 2) * (f0 ** 2) + 4 * p0 * p1 * (f0 ** 2) +
-                         4 * p0 * p1 * f0 * f1 + 4 * (p1 ** 2) * (f0 ** 2) + 8 * (p1 ** 2) * f0 * f1 +
-                         4 * (p1 ** 2) * (f1 ** 2)) + He * (2 * (p1 ** 2) * (f0 ** 2) +
-                                                            4 * (p1 ** 2) * f0 * f1 + 2 * (p1 ** 2) * (f1 ** 2))
-             )
-    AB_AB = He * ((p0 ** 2) * (f0 ** 2))
-    AA_AB = ((1 - He) * (4 * (p0 ** 2) * f0 * f1 + 8 * p0 * p1 * f0 * f1 +
-                         8 * p0 * p1 * (f1 ** 2)) + He * (4 * p0 * p1 * (f0 ** 2) +
-                                                          8 * p0 * p1 * f0 * f1 + 4 * p0 * p1 * (f1 ** 2))
-             )
-    AA_BB = ((1 - He) * (4 * p0 * p1 * f0 * f1 + 4 * p0 * p1 * f0 * f2 +
-                         8 * (p1 ** 2) * f0 * f1 + 8 * (p1 ** 2) * f0 * f2 + 12 * (p1 ** 2) * (f1 ** 2)) +
-             He * (2 * (p1 ** 2) * (f0 ** 2) + 12 * (p1 ** 2) * f0 * f1 +
-                   14 * (p1 ** 2) * (f1 ** 2) + 12 * (p1 ** 2) * f0 * f2)
-             )
-    AB_AC = ((1 - He) * (4 * (p0 ** 2) * (f1 ** 2)) + He * (4 * (p0 ** 2) * f0 * f1 +
-                                                            2 * (p0 ** 2) * (f1 ** 2))
-             )
-    AB_CC = ((1 - He) * (2 * (p0 ** 2) * f0 * f2 + 8 * p0 * p1 * (f1 ** 2) +
-                         4 * p0 * p1 * f0 * f2) + He * (8 * p0 * p1 * f0 * f1 +
-                                                        12 * p0 * p1 * (f1 ** 2) + 8 * p0 * p1 * f0 * f2)
-             )
-    AB_CD = He * (2 * (p0 ** 2) * f0 * f2 + 2 * (p0 ** 2) * (f1 ** 2))
-    cat_hz_dictionary = {'AA_AA': AA_AA, 'AB_AB': AB_AB,
-                         'AA_AB': AA_AB, 'AA_BB': AA_BB,
-                         'AB_AC': AB_AC, 'AB_CC': AB_CC,
-                         'AB_CD': AB_CD}
-    return cat_hz_dictionary
-
-
-def He_calc(He_input_dictionary):
-    # Calculating He, Var of He, SE, 95% CI of He
-    He_locus_dictionary = {}
-    for locus, genotypes in He_input_dictionary.iteritems():
-        obs_hetero = 0
-        total = 0
-        allele_dictionary = {}
-        for genotype in genotypes:
-            if genotype != '000000':
-                alleles = genotype[:3], genotype[3:]
-                if alleles[0] != alleles[1]:
-                    obs_hetero += 1
-                total += 1
-                for allele in alleles:
-                    if allele in allele_dictionary.keys():
-                        allele_dictionary[allele] += 1
-                    else:
-                        allele_dictionary[allele] = 1
-        sum_AF_squared = float(0)
-        sum_AF_cubed = float(0)
-        total_alleles_counted = float(total * 2)
-        for allele, count in allele_dictionary.iteritems():
-            allele_frequency = float(float(count) / total_alleles_counted)
-            sum_AF_squared = sum_AF_squared + float(allele_frequency ** 2)
-            sum_AF_cubed = sum_AF_cubed + float(allele_frequency ** 3)
-            allele_dictionary[allele] = count, allele_frequency
-
-        # PEDANT equations below
-        est_He = (total_alleles_counted) * ((1 - sum_AF_squared) / (total_alleles_counted - 1))
-        He_variance = ((1 / ((total_alleles_counted / 2) * (total_alleles_counted - 1))) *
-                       (sum_AF_squared - sum_AF_squared ** 2 + 2 * (total_alleles_counted - 2) *
-                        (sum_AF_cubed - sum_AF_squared ** 2)))
-        He_stddev = float(math.sqrt(He_variance))
-        h = He_stddev * 1.96
-        alpha_95 = est_He - h, est_He + h
-        He_locus_dictionary[locus] = (round(est_He, 4), round(He_variance, 8),
-                                      round(He_stddev, 8), round(alpha_95[0], 4),
-                                      round(alpha_95[1], 4), allele_dictionary)
-    return He_locus_dictionary
-
-
 def cause_FA(sub_genotype, FA_rate_dictionary, locus_name):
     allele_1 = sub_genotype[:3]
     allele_2 = sub_genotype[3:]
     probability = float(randint(0, 100) / float(100))
     FA_rate = float(FA_rate_dictionary[locus_name])
     # print locus_name
-    #print probability,FA_rate
+    # print probability,FA_rate
     if probability <= FA_rate:
         allele_1 = 'FFF'
     # for allele 2
     probability = float(randint(0, 100) / float(100))
     FA_rate = float(FA_rate_dictionary[locus_name])
-    #print probability, FA_rate
+    # print probability, FA_rate
     if probability <= FA_rate:
         allele_2 = 'FFF'
     sub_genotype = str(allele_1) + str(allele_2)
@@ -374,8 +235,7 @@ def main(simtype, infile, errfile, boutlimit,
          samplelimit, perbout, popsize, percentpresent, outfile):
     # assemble the virtual population based on user specifications
     # output object has virt pop, sample_limit, and bout limit
-    assemble_it = assemblepopulation(simtype, infile, popsize
-                                     )
+    assemble_it = assemblepopulation(simtype, infile, popsize)
     virtual_population = (assemble_it[0], str(perbout), int(samplelimit), int(boutlimit), percentpresent)
     locus_name_list = assemble_it[1]
     print locus_name_list
@@ -414,37 +274,15 @@ def main(simtype, infile, errfile, boutlimit,
                     o.write(sample_id + '_' + str(bout_index) + ','
                             + ','.join(double_code_list) + '\n')
 
-    # calculate the error probabilities for ADO and FA
-    # you must supply heterozygosity, ADO and FA rates for the pop.
-    '''
-    He_locus_dictionary = He_calc(assemble_it[6])
-    #print He_locus_dictionary
-    for loci_index in range(0,len(He_locus_dictionary.keys())):
-        locus = He_locus_dictionary.keys()[loci_index]
-        locus_He = He_locus_dictionary[locus][0]
-        ADO = 0.06
-        FA = 0.12
-        print locus,locus_He
-        print '\n'.join([str(x) + ' ' + str(round(y,4)) for x,y in 
-                        geno_cat_calc(locus_He, ADO, FA).iteritems()])
-    '''
-
-    # returns a dictionary of the resampled individuals and their multiplicity
-    '''
-    resampled_dictionary = resampled(season_sample)
-    for sample_id, multiplicity in resampled_dictionary.iteritems():
-        print sample_id, 'was resampled',multiplicity,'times...'
-    '''
-
 
 ### MAIN ###
 if __name__ == '__main__':
     # collect arguments from commandline
     parser = argparse.ArgumentParser(description='insert program description')
-    parser.add_argument('-t', '--simtype', help='Specify which type of simulation type; virtpop, simfile, genepop.',
+    parser.add_argument('-t', '--simtype', help='Specify which type of simulation type; currently only simfile',
                         required=True
                         )
-    parser.add_argument('-i', '--infile', help='Specify path to input file; GENEPOP, SIMFILE, or no input.',
+    parser.add_argument('-i', '--infile', help='Specify path to input frequency file; SIMFILE',
                         required=True
                         )
     parser.add_argument('-e', '--errfile', help='Specify path to input error file; JSON format',
@@ -477,11 +315,3 @@ if __name__ == '__main__':
          args['boutlimit'], args['samplelimit'], args['perbout'], args['popsize'],
          args['percentpresent'], args['outfile']
          )
-
-
-
-
-
-
-
-
