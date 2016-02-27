@@ -2,7 +2,7 @@
 * * *
 * * *
 ####What is it used for?
-wisepair is a set of python scripts built to address two issues in individual-based
+WisePair is a set of python scripts built to address two issues in individual-based
 genetic tracking studies.  
 1) Sampling scheme design to maximize resampling a set number of individuals.  
 2) Confidently identifying individuals who have been resampled in a data-set.  
@@ -20,7 +20,11 @@ The final script, optimagic.py, utilized outputs from both beanbag.py and wisepa
 ####**_beanbag.py_**  
 To build a virtual population, beanbag.py requires 2 input files and several flags.  
 INFILE is a JSON format file which contains loci names, alleles for each loci and allelic frequencies for each allele. ERRFILE is a JSON format file which contains loci names, allelic dropout rates, and false allele rates. Currently there is no function to build these files, so they must be built manually.  
-Examples of both files can be found in the **sample_data** directory.
+Examples of both files can be found in the **sample_data** directory.  
+
+The required flags are: [-t], [-i], [-e], [-b], [-s], [-p], [-o]  
+Optional flags are: [-l], [-r]
+An example command is found in the **sample_data** directory, in the example_cmds.txt file.  
 * * *
 usage: beanbag.py [-h] -t SIMTYPE -i INFILE -e ERRFILE -b BOUTLIMIT -s  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o  
