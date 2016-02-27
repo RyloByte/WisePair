@@ -9,19 +9,25 @@ import argparse
 
 
 def assemblepopulation(simtype, infile, popsize):
-    if simtype == 'simfile':
+    '''
+    Creates a virtual population object with provided
+    loci allelic frequency, error rates, and population size.
+    '''
+    if simtype == 'simfile': # currently only accepts one format for frequencie
+        # load input allelic frequenices from JSON file
         input = infile
         with open(input, 'r') as o:
             virtual_genepool = json.load(o)
-        # print virtual_genepool
+        # map alleles to their loci
         code2loci_dictionary = {}
         for loci_index in range(0, len(virtual_genepool.keys())):
             loci_name = virtual_genepool.keys()[loci_index]
             allele_keys = virtual_genepool[loci_name].keys()
             for allele_code in allele_keys:
                 code2loci_dictionary[str(allele_code)] = str(loci_name)
+        # set population limit
         number_of_individuals = int(popsize)
-        # built virtual population from JSON file
+        # built virtual population
         from_virtpop = virtualPopulation(virtual_genepool, number_of_individuals)
         population_count = 1
         population_dictionary = {population_count: []}
@@ -55,42 +61,26 @@ def assemblepopulation(simtype, infile, popsize):
         return virtual_population
 
 
-def virtualGenepool(loci_range, allele_range):
-    # creates a virtual pool of loci and alleles to draw from
-    loci_min = int(loci_range[0])
-    loci_max = int(loci_range[1])
-    allele_min = int(allele_range[0])
-    allele_max = int(allele_range[1])
-    # randomly pick number of loci
-    number_of_loci = randint(loci_min, loci_max)
-    print 'There are:\n', number_of_loci, ' loci...'
-    lociDictionary = {}
-    for loci in range(number_of_loci):
-        # randomly pick number of alleles
-        number_of_alleles = randint(allele_min, allele_max)
-        print number_of_alleles, ' alleles for loci', loci, '...'
-        max_probability = 100 - (number_of_alleles)
-        min_probability = 1
-        alleleDone = False
-        while not alleleDone == True:
-            alleleList = []
-            for allele in range(number_of_alleles):
-                allele_probability = 1
-                if allele + 1 == number_of_alleles:
-                    allele_probability = max_probability + 1
-                elif max_probability > min_probability:
-                    allele_probability = (allele_probability +
-                                          randint(min_probability, max_probability)
-                                          )
-                alleleList.append(float(allele_probability) / float(100))
-                max_probability = max_probability - allele_probability + 1
-            alleleDone = True
-            lociDictionary[loci] = alleleList
-    return lociDictionary
+def virtualPopulation(virtual_genepool, number_of_individuals):
+    '''
+    Build population from the genepool
+    '''
+
+    sampleList = []
+    virtual_population = {}
+    for sample in range(number_of_individuals):
+        sample_name = 'virtsim_' + str(sample)
+        # Build individuals genotype
+        individual = buildGenotype(virtual_genepool)
+        sampleList.append(individual)
+        virtual_population[sample_name] = individual
+    return virtual_population
 
 
 def buildGenotype(virtual_genepool):
-    # creates
+    '''
+    Creates genotype for a single individual from a genepool
+    '''
     individual = {0: [], 1: []}
     for allele_id, alleleList in individual.iteritems():
         for loci, allele_dictionary in virtual_genepool.iteritems():
@@ -109,19 +99,10 @@ def buildGenotype(virtual_genepool):
         individual[allele_id] = alleleList
     return individual
 
-
-def virtualPopulation(virtual_genepool, number_of_individuals):
-    sampleList = []
-    virtual_population = {}
-    for sample in range(number_of_individuals):
-        sample_name = 'virtsim_' + str(sample)
-        individual = buildGenotype(virtual_genepool)
-        sampleList.append(individual)
-        virtual_population[sample_name] = individual
-    return virtual_population
-
-
 def virtualSeason(virt_pop_tuple):
+    '''
+    Run a sampling season on the virtual population
+    '''
     population, per_bout, sample_limit, bout_limit, percent_present = virt_pop_tuple
     print len(population), 'individuals...'
     print float(percent_present) * 100, 'percent are present for each bout...'
@@ -161,12 +142,18 @@ def virtualSeason(virt_pop_tuple):
 
 
 def present(population, percent_present):
+    '''
+    Build sub-population of individuals present at the time of sampling
+    '''
     subset_size = int(len(population)) * float(percent_present)
     present_pop = sample(set(population), int(subset_size))
     return present_pop
 
 
 def resampled(season_sample):
+    '''
+    
+    '''
     resampled_list = []
     for x, left in enumerate(season_sample):
         for y, right in enumerate(season_sample):
