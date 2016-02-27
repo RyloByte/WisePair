@@ -19,31 +19,31 @@ The final script, optimagic.py, utilized outputs from both beanbag.py and wisepa
 To build a virtual population, beanbag.py requires 2 input files and several flags.  
 
 usage: beanbag.py [-h] -t SIMTYPE -i INFILE -e ERRFILE -b BOUTLIMIT -s  
-                  SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o  
-                  OUTFILE  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTFILE  
 
 insert program description  
 
 optional arguments:  
-  -h, --help            show this help message and exit  
-  -t SIMTYPE, --simtype SIMTYPE  
-                        Specify which type of simulation type; currently only  
-                        simfile  
-  -i INFILE, --infile INFILE  
-                        Specify path to input frequency file; SIMFILE  
-  -e ERRFILE, --errfile ERRFILE  
-                        Specify path to input error file; JSON format  
-  -b BOUTLIMIT, --boutlimit BOUTLIMIT  
-                        Total number of sampling bouts for a season.  
-  -s SAMPLELIMIT, --samplelimit SAMPLELIMIT  
-                        Total number of samples for a season.  
-  -l PERBOUT, --perbout PERBOUT  
-                        Number of samples for each bout. [default = False]  
-  -p POPSIZE, --popsize POPSIZE  
-                        Specify the size of a virtual population.  
-  -r PERCENTPRESENT, --percentpresent PERCENTPRESENT  
-                        Population present at each sampling between 0-1  
-                        [default = 1]  
-  -o OUTFILE, --outfile OUTFILE  
-                        Specify the output file.  
+&nbsp;&nbsp;-h, --help            show this help message and exit  
+&nbsp;&nbsp;-t SIMTYPE, --simtype SIMTYPE  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify which type of simulation type; currently only  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;simfile  
+&nbsp;&nbsp;-i INFILE, --infile INFILE  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify path to input frequency file; SIMFILE  
+&nbsp;&nbsp;-e ERRFILE, --errfile ERRFILE  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify path to input error file; JSON format  
+&nbsp;&nbsp;-b BOUTLIMIT, --boutlimit BOUTLIMIT  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total number of sampling bouts for a season.  
+&nbsp;&nbsp;-s SAMPLELIMIT, --samplelimit SAMPLELIMIT  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total number of samples for a season.  
+&nbsp;&nbsp;-l PERBOUT, --perbout PERBOUT  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of samples for each bout. [default = False]  
+&nbsp;&nbsp;-p POPSIZE, --popsize POPSIZE  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify the size of a virtual population.  
+&nbsp;&nbsp;-r PERCENTPRESENT, --percentpresent PERCENTPRESENT  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Population present at each sampling between 0-1  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[default = 1]  
+&nbsp;&nbsp;-o OUTFILE, --outfile OUTFILE  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify the output file.  
 
