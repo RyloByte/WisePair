@@ -19,7 +19,10 @@ The final script, optimagic.py, utilized outputs from both beanbag.py and wisepa
 ####Usage:
 ####**_beanbag.py_**  
 To build a virtual population, beanbag.py requires 2 input files and several flags.  
-
+INFILE is a JSON format file which contains loci names, alleles for each loci and allelic frequencies for each allele.  
+ERRFILE is a JSON format file which contains loci names, allelic dropout rates, and false allele rates.  
+Currently there is no function to build these files, so they must be built manually.
+Examples of both files can be found in the **sample_data** directory
 * * *
 usage: beanbag.py [-h] -t SIMTYPE -i INFILE -e ERRFILE -b BOUTLIMIT -s  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o  
