@@ -17,9 +17,11 @@ The final script, optimagic.py, utilized outputs from both beanbag.py and wisepa
 * * *
 * * *
 ####Usage:
-**_beanbag.py_**  
+####**_beanbag.py_**  
 To build a virtual population, beanbag.py requires 2 input files and several flags.  
-
+INFILE is a JSON format file which contains loci names, alleles for each loci and allelic frequencies for each allele.  
+ERRFILE is a JSON format file which contains loci names, allelic dropout rates, and false allele rates.  
+Currently there is no function to build these files, so they must be built manually.
 * * *
 usage: beanbag.py [-h] -t SIMTYPE -i INFILE -e ERRFILE -b BOUTLIMIT -s  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o  
@@ -49,7 +51,7 @@ optional arguments:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify the output file.  
 * * *
 * * *
-**_wisepair.py_**  
+####**_wisepair.py_**  
 
 * * *
 usage: wisepair.py [-h] [-s SIMDIR] [-l SIMLIST]  
@@ -62,7 +64,7 @@ optional arguments:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list of simulation files.  
 * * *
 * * *
-**_optimagic.py_**  
+####**_optimagic.py_**  
 
 * * *
 usage: optimagic.py [-h] [-s SIMDIR] -p POPSIZE [-x PERPOP] -l SAMPRAN -b  
