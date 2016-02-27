@@ -55,7 +55,7 @@ optional arguments:
 * * *
 * * *
 ####**_wisepair.py_**  
-
+INSERT OVERVIEW HERE
 * * *
 usage: wisepair.py [-h] [-s SIMDIR] [-l SIMLIST]  
 
@@ -68,7 +68,7 @@ optional arguments:
 * * *
 * * *
 ####**_optimagic.py_**  
-
+INSERT OVERVIEW HERE
 * * *
 usage: optimagic.py [-h] [-s SIMDIR] -p POPSIZE [-x PERPOP] -l SAMPRAN -b  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BOUTRAN -r RESAMPMIN -n NUMMINRAN [-u RUNSIM] [-m ITERLIM]  
