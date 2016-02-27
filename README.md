@@ -16,34 +16,34 @@ The final script, optimagic.py, utilized outputs from both beanbag.py and wisepa
 * * *
 ####Usage:
 **_beanbag.py_**  
-To build a virtual population, beanbag.py requires 2 input files and several flags.
+To build a virtual population, beanbag.py requires 2 input files and several flags.  
 
-usage: beanbag.py [-h] -t SIMTYPE -i INFILE -e ERRFILE -b BOUTLIMIT -s
-                  SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o
-                  OUTFILE
+usage: beanbag.py [-h] -t SIMTYPE -i INFILE -e ERRFILE -b BOUTLIMIT -s  
+                  SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o  
+                  OUTFILE  
 
-insert program description
+insert program description  
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -t SIMTYPE, --simtype SIMTYPE
-                        Specify which type of simulation type; currently only
-                        simfile
-  -i INFILE, --infile INFILE
-                        Specify path to input frequency file; SIMFILE
-  -e ERRFILE, --errfile ERRFILE
-                        Specify path to input error file; JSON format
-  -b BOUTLIMIT, --boutlimit BOUTLIMIT
-                        Total number of sampling bouts for a season.
-  -s SAMPLELIMIT, --samplelimit SAMPLELIMIT
-                        Total number of samples for a season.
-  -l PERBOUT, --perbout PERBOUT
-                        Number of samples for each bout. [default = False]
-  -p POPSIZE, --popsize POPSIZE
-                        Specify the size of a virtual population.
-  -r PERCENTPRESENT, --percentpresent PERCENTPRESENT
-                        Population present at each sampling between 0-1
-                        [default = 1]
-  -o OUTFILE, --outfile OUTFILE
-                        Specify the output file.
+optional arguments:  
+  -h, --help            show this help message and exit  
+  -t SIMTYPE, --simtype SIMTYPE  
+                        Specify which type of simulation type; currently only  
+                        simfile  
+  -i INFILE, --infile INFILE  
+                        Specify path to input frequency file; SIMFILE  
+  -e ERRFILE, --errfile ERRFILE  
+                        Specify path to input error file; JSON format  
+  -b BOUTLIMIT, --boutlimit BOUTLIMIT  
+                        Total number of sampling bouts for a season.  
+  -s SAMPLELIMIT, --samplelimit SAMPLELIMIT  
+                        Total number of samples for a season.  
+  -l PERBOUT, --perbout PERBOUT  
+                        Number of samples for each bout. [default = False]  
+  -p POPSIZE, --popsize POPSIZE  
+                        Specify the size of a virtual population.  
+  -r PERCENTPRESENT, --percentpresent PERCENTPRESENT  
+                        Population present at each sampling between 0-1  
+                        [default = 1]  
+  -o OUTFILE, --outfile OUTFILE  
+                        Specify the output file.  
 
