@@ -16,7 +16,7 @@ def main(simtype, infile, errfile, boutlimit,
 # Start Main
 if __name__ == '__main__':
     # collect arguments from commandline
-    parser = argparse.ArgumentParser(description='insert program description')
+    parser = argparse.ArgumentParser(description='')
     parser.add_argument('-t', '--simtype', help='Specify which type of simulation type; virtpop, simfile, genepop.',
                         required=True
                         )

@@ -7,7 +7,6 @@ genetic tracking studies.
 1) Sampling scheme design to maximize resampling a set number of individuals.  
 2) Confidently identifying individuals who have been resampled in a data-set.  
 * * *
-* * *
 ####There are 3 main scripts in the core of WisePair:  
 **_beanbag.py_**  
 The beanbag.py script was specifically designed to build virtual individual genotypes of a population to be used in simulated sampling.  This design was based on user-supplied criteria such as number of individuals in the population, number of loci, and allelic frequencies.  In addition, this script incorporated genotyping error rates during sampling.  
@@ -20,12 +19,11 @@ The final script, optimagic.py, utilized outputs from both beanbag.py and wisepa
 ####Usage:
 **_beanbag.py_**  
 To build a virtual population, beanbag.py requires 2 input files and several flags.  
+
 * * *
 usage: beanbag.py [-h] -t SIMTYPE -i INFILE -e ERRFILE -b BOUTLIMIT -s  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAMPLELIMIT [-l PERBOUT] -p POPSIZE [-r PERCENTPRESENT] -o  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTFILE  
-
-insert program description  
 
 optional arguments:  
 &nbsp;&nbsp;-h, --help            show this help message and exit  
@@ -56,8 +54,6 @@ optional arguments:
 * * *
 usage: wisepair.py [-h] [-s SIMDIR] [-l SIMLIST]  
 
-insert program description  
-
 optional arguments:  
 &nbsp;&nbsp;-h, --help            show this help message and exit  
 &nbsp;&nbsp;-s SIMDIR, --simdir SIMDIR  
@@ -72,8 +68,6 @@ optional arguments:
 usage: optimagic.py [-h] [-s SIMDIR] -p POPSIZE [-x PERPOP] -l SAMPRAN -b  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BOUTRAN -r RESAMPMIN -n NUMMINRAN [-u RUNSIM] [-m ITERLIM]  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[-t SIMTYPE] [-i SIMFILE] [-e ERRFILE]  
-
-insert program description  
 
 optional arguments:  
 &nbsp;&nbsp;-h, --help            show this help message and exit  

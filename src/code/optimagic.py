@@ -148,7 +148,7 @@ def main(simdir, popsize, perpop, sampran, boutran, resampmin,
 
 if __name__ == '__main__':
     # collect arguments from commandline
-    parser = argparse.ArgumentParser(description='insert program description')
+    parser = argparse.ArgumentParser(description='')
     parser.add_argument('-s', '--simdir', help='path to simulation file directory.',
                         required=False, default=dirname(realpath(__file__))
                         )
