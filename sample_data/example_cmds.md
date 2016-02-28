@@ -5,3 +5,4 @@ This example builds a virtual population of 300 individuals. It then precedes to
 python beanbag.py -t simfile -i real_data_frequencies.json -e pedant_error_rates.json -b 5 -s 125 -p 300 -r 0.5 -o example_output.csv
 ```
 * * *
+

@@ -51,13 +51,7 @@ def make_pairwise(sample_dictionary):
     key_list = [list(sample_dictionary.keys()), list(sample_dictionary.keys())]
     # samples_pairwise = list(itertools.product(*key_list))
     samples_pairwise = [x for x in itertools.combinations(key_list[0], 2)]
-    '''
-    for sample_index in range(0,len(sample_dictionary.keys())):
-        sample_id = sample_dictionary.keys()[sample_index]
-        for sample_index_2 in range(sample_index + 1,len(sample_dictionary.keys())):
-            sample_id_2 = sample_dictionary.keys()[sample_index_2]
-            samples_pairwise.append((sample_id,sample_id_2))
-    '''
+
     return samples_pairwise
 
 
@@ -122,7 +116,6 @@ def main(simdir, simlist):
             sim_list = ast.literal_eval(simlist)
         except:
             sim_list = simlist.split(',')
-            # sim_list = ['pairwise_error.csv', 'pairwise_full_noLW20.csv']
 
     # input model data to be used for real data analysis if it exists
     model_file = 'model_stats.tsv'
@@ -262,10 +255,12 @@ def main(simdir, simlist):
 
         # make histogram of resampled individuals
         resampled_individual_df = score_df[(score_df.resampled == True)]
+        print resampled_individual_df
         # add general virtsim id for creation of second graph
         general_sample = resampled_individual_df['sample_0'].apply(lambda x: '_'.join(x.split('_')[0:2]))
         resampled_individual_df['general_sample'] = general_sample
         found_resamples = resampled_individual_df.shape[0]
+        print resampled_individual_df
         if found_resamples != 0:
             group_res_in = pd.DataFrame(resampled_individual_df.groupby([corr_Or_norm]
             )[corr_Or_norm].count())
@@ -281,14 +276,24 @@ def main(simdir, simlist):
             x_res_max = group_res_in[corr_Or_norm].max()
             x_res_min = group_res_in[corr_Or_norm].min()
             x_res_mean = group_res_in[corr_Or_norm].mean()
+            print y_res_max
+            print x_res_max
+            print x_res_min
+            print x_res_mean
             if sim_OR_not == True:
-                x_res_se = scipy.stats.sem(group_res_in[corr_Or_norm])
+                print group_res_in
+                if len(group_res_in) >= 2:
+                    x_res_se = scipy.stats.sem(group_res_in[corr_Or_norm])
+                else:
+                    x_res_se = float(0)
                 if math.isnan(x_res_se) == True:
                     x_res_std = 0
                 x_res_count = group_res_in[corr_Or_norm].count()
                 n = len(group_res_in[corr_Or_norm])
                 confidence = 0.95
                 x_res_95_conf = x_res_se * sp.stats.t._ppf((1 + confidence) / 2., n - 1)
+                print x_res_max
+                print x_res_95_conf
                 upper_bound = x_res_max + x_res_95_conf
                 sim_stats = sim_stats + [str(y_res_max), str(x_res_max), str(x_res_min),
                                          str(x_res_mean), str(upper_bound)
@@ -304,6 +309,8 @@ def main(simdir, simlist):
                 plt.plot([upper_bound, upper_bound], [y_dist_max, 0],
                          linestyle='dashed', color='r'
                          )
+                print upper_bound
+                print lower_bound
                 if upper_bound <= lower_bound:
                     facecolor = 'g'
                 if upper_bound > lower_bound:

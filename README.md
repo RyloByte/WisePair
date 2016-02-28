@@ -55,7 +55,7 @@ optional arguments:
 * * *
 * * *
 ####**_wisepair.py_**  
-INSERT OVERVIEW HERE
+
 * * *
 usage: wisepair.py [-h] [-s SIMDIR] [-l SIMLIST]  
 
