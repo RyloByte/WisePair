@@ -69,7 +69,8 @@ optional arguments:
 * * *
 * * *
 ####**_optimagic.py_**  
-INSERT OVERVIEW HERE
+This script combines requirements of `beanbag.py` and `wisepair.py` along with some ranges that allow for multiple schemes to be tested.  
+Real data can be analyzed after models are built for comparison.   
 * * *
 usage: optimagic.py [-h] [-s SIMDIR] -p POPSIZE [-x PERPOP] -l SAMPRAN -b  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BOUTRAN -r RESAMPMIN -n NUMMINRAN [-u RUNSIM] [-m ITERLIM]  
