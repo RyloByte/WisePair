@@ -131,13 +131,13 @@ python optimagic.py -s [path to output] -p 100 -x 0.5 -l 20,25 -b 5,8 -r 2 -n 3 
 ###Analyzing real data with simulations
 * * *
 ####**Example command to run `optimagic.py`**
-Run optimagic with the bounds of the real data sampling scheme at a higher iteration limit to build a model for the real data.  
+Run `optimagic.py` with the bounds of the real data sampling scheme at a higher iteration limit to build a model for the real data.  
 ```python
 python optimagic.py -s [path to output] -p 100 -x 0.5 -l 30 -b 5 -r 2 -n 3 -u True -m 10 -t simfile -i real_data_frequencies.json -e pedant_error_rates.json
 ```
 * * *
 ####**Example command to run `wisepair.py`**
-Copy the model_stats.tsv from the optimagic output directory to the same location as the real data files.  
+Copy the **model_stats.tsv** from the optimagic output directory to the same location as the real data files.  
 Output from this will be identified resampled individuals.  
 ```python
 python wisepair.py -s [location of beanbag.py output csv] -l [csv filename with no path]
