@@ -133,7 +133,7 @@ def main(simdir, simlist):
 
     # start main processing loop for each sim file
     # Magic value to write model file or not, usually should be True
-    write2model = False
+    write2model = True
     corr_Or_norm = 'normalized_score'
     #corr_Or_norm = 'corrected_score'
 
@@ -255,12 +255,10 @@ def main(simdir, simlist):
 
         # make histogram of resampled individuals
         resampled_individual_df = score_df[(score_df.resampled == True)]
-        print resampled_individual_df
         # add general virtsim id for creation of second graph
         general_sample = resampled_individual_df['sample_0'].apply(lambda x: '_'.join(x.split('_')[0:2]))
         resampled_individual_df['general_sample'] = general_sample
         found_resamples = resampled_individual_df.shape[0]
-        print resampled_individual_df
         if found_resamples != 0:
             group_res_in = pd.DataFrame(resampled_individual_df.groupby([corr_Or_norm]
             )[corr_Or_norm].count())
@@ -276,12 +274,7 @@ def main(simdir, simlist):
             x_res_max = group_res_in[corr_Or_norm].max()
             x_res_min = group_res_in[corr_Or_norm].min()
             x_res_mean = group_res_in[corr_Or_norm].mean()
-            print y_res_max
-            print x_res_max
-            print x_res_min
-            print x_res_mean
             if sim_OR_not == True:
-                print group_res_in
                 if len(group_res_in) >= 2:
                     x_res_se = scipy.stats.sem(group_res_in[corr_Or_norm])
                 else:
@@ -292,9 +285,10 @@ def main(simdir, simlist):
                 n = len(group_res_in[corr_Or_norm])
                 confidence = 0.95
                 x_res_95_conf = x_res_se * sp.stats.t._ppf((1 + confidence) / 2., n - 1)
-                print x_res_max
-                print x_res_95_conf
-                upper_bound = x_res_max + x_res_95_conf
+                if math.isnan(x_res_95_conf) == False:
+	                upper_bound = x_res_max + x_res_95_conf
+                else:
+                    upper_bound = x_res_max
                 sim_stats = sim_stats + [str(y_res_max), str(x_res_max), str(x_res_min),
                                          str(x_res_mean), str(upper_bound)
                                          ]
@@ -309,8 +303,6 @@ def main(simdir, simlist):
                 plt.plot([upper_bound, upper_bound], [y_dist_max, 0],
                          linestyle='dashed', color='r'
                          )
-                print upper_bound
-                print lower_bound
                 if upper_bound <= lower_bound:
                     facecolor = 'g'
                 if upper_bound > lower_bound:
