@@ -1,0 +1,2 @@
+file	y_dist_max	x_dist_max	x_dist_min	x_dist_mean	lower_bound	y_res_max	x_res_max	x_res_min	x_res_mean	upper_bound
+P100_S200_B8_R0.5_I0.csv	594	0.256684491979	-0.27807486631	-0.00950683303624	-0.418793215867	6	-0.475935828877	-0.743315508021	-0.610695187166	-0.34469039948
