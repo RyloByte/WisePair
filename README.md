@@ -9,16 +9,16 @@ genetic tracking studies.
 * * *
 ####There are 3 main scripts in the core of WisePair:  
 **_beanbag.py_**  
-The beanbag.py script was specifically designed to build virtual individual genotypes of a population to be used in simulated sampling.  This design was based on user-supplied criteria such as number of individuals in the population, number of loci, and allelic frequencies.  In addition, this script incorporated genotyping error rates during sampling.  
+The `beanbag.py` script is designed to build virtual individual genotypes of a population to be used in simulated sampling.  This design is based on user-supplied criteria such as number of individuals in the population, number of loci, and allelic frequencies.  In addition, this script incorporates genotyping error rates during sampling.  
 **_wisepair.py_**  
-The second script, wisepair.py, was created to determine the number of re-samples within a specified data set (real or virtual) through allelic pairwise comparisons.  wisepair.py determined the number of re-samples within a virtual data set, determined the number of re-samples within an actual data using specified threshold simulations, estimated the number of errors for re-samples, and determined whether re-samples can be distinguished from non-re-samples.  
+The second script, `wisepair.py`, determines the number of re-samples within a specified data set (real or virtual) through allelic pairwise comparisons.  `wisepair.py` determines the number of re-samples within a virtual data set, determines the number of re-samples within an actual data using specified threshold simulations, estimates the number of errors for re-samples, and determines whether re-samples can be distinguished from non-re-samples.  
 **_optimagic.py_**  
-The final script, optimagic.py, utilized outputs from both beanbag.py and wisepair.py to develop optimal sampling designs for individual based studies.  beanbag.py and wisepair.py were used to produce a threshold “score” with which we could compare samples to the field data set and subsequent simulations in OPTIMAGIC.py  
+The final script, `optimagic.py`, utilizes outputs from both `beanbag.py` and `wisepair.py` to develop optimal sampling designs for individual based studies.  `beanbag.py` and `wisepair.py` are used to produce a threshold “score” with which we could compare samples to the field data set and subsequent simulations in `optimagic.py`  
 * * *
 * * *
 ####Usage:
 ####**_beanbag.py_**  
-To build a virtual population, beanbag.py requires 2 input files and several flags.  
+To build a virtual population, `beanbag.py` requires 2 input files and several flags.  
 INFILE is a JSON format file which contains loci names, alleles for each loci and allelic frequencies for each allele. ERRFILE is a JSON format file which contains loci names, allelic dropout rates, and false allele rates. Currently there is no function to build these files, so they must be built manually.  
 Examples of both files can be found in the **sample_data** directory.  
 
@@ -55,7 +55,8 @@ optional arguments:
 * * *
 * * *
 ####**_wisepair.py_**  
-
+`wisepair.py` takes 2 inputs, the directory to the `beanbag.py` output and a list of the output files.  
+If real data is being analyzed aswell, those files should be run separatly (and after) from the simulated data so that the model_stats file is already created.  
 * * *
 usage: wisepair.py [-h] [-s SIMDIR] [-l SIMLIST]  
 
