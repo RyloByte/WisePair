@@ -7,7 +7,7 @@ def main(simtype, infile, errfile, boutlimit,
          samplelimit, popsize, perpop, perbout, outfile, iterations):
     for i in range(0, int(iterations)):
         print i
-        run = Popen(['python', 'BeanBag.py', '-t', simtype, '-i', infile, '-e', errfile,
+        run = Popen(['python', 'beanbag.py', '-t', simtype, '-i', infile, '-e', errfile,
                      '-p', popsize, '-r', perpop, '-l', str(perbout), '-s', samplelimit, '-b', boutlimit, '-o',
                      outfile + '_I' + str(i) + '.csv'], stdout=PIPE)
         print run.stdout.read()

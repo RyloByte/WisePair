@@ -45,7 +45,7 @@ def set_simdir(simdir, om_dir_name):
 
 def run_sim(simdir, simtype, simfile, errfile, popsize, perpop, samplim, boutlim, iterlim):
     print 'Using Simerator to run %s iterations...' % str(iterlim)
-    print 'Running BeanBag simulations...'
+    print 'Running beanbag simulations...'
     om_work_dir = set_simdir(simdir, 'OM_simdir')
     outfile = join(om_work_dir, ''.join(['P', str(popsize), '_S', str(samplim), '_B', str(boutlim), '_R', str(perpop)]))
     run = Popen(['python', 'simerator.py', '-t', simtype, '-i', simfile,
@@ -57,7 +57,7 @@ def run_sim(simdir, simtype, simfile, errfile, popsize, perpop, samplim, boutlim
 
 def run_wise(simdir, simlist):
     print 'Running WisePair scoring algorithm...\n'
-    run = Popen(['python', 'wise_pair.py', '-s', simdir, '-l', str(simlist)], stdout=PIPE)
+    run = Popen(['python', 'wisepair.py', '-s', simdir, '-l', str(simlist)], stdout=PIPE)
     run.stdout.read()
 
 
@@ -158,28 +158,28 @@ if __name__ == '__main__':
     parser.add_argument('-x', '--perpop', help='population size present at site.',
                         required=False, default=1
                         )
-    parser.add_argument('-l', '--sampran', help='range of samples per bout.',
+    parser.add_argument('-l', '--sampran', help='range of samples per bout; ex. 5,10.',
                         required=True
                         )
-    parser.add_argument('-b', '--boutran', help='range of bouts.',
+    parser.add_argument('-b', '--boutran', help='range of bouts; ex. 5,10.',
                         required=True
                         )
-    parser.add_argument('-r', '--resampmin', help='minimum individuals resampled over season.',
+    parser.add_argument('-r', '--resampmin', help='minimum individuals resampled over season; int.',
                         required=True
                         )
-    parser.add_argument('-n', '--numminran', help='range for minimum number of resamples per resampled individual.',
+    parser.add_argument('-n', '--numminran', help='range for minimum number of resamples per resampled individual; ex. 5,10.',
                         required=True
                         )
-    parser.add_argument('-u', '--runsim', help='use simerator to run simulations.',
+    parser.add_argument('-u', '--runsim', help='use simerator to run simulations; True or False',
                         required=False, default=False
                         )
-    parser.add_argument('-m', '--iterlim', help='number of iterations during simulation mode.',
+    parser.add_argument('-m', '--iterlim', help='number of iterations during simulation mode; int.',
                         required=False, default=False
                         )
-    parser.add_argument('-t', '--simtype', help='specitfy type of input simulation format: virtpop, simfile, genepop.',
+    parser.add_argument('-t', '--simtype', help='specitfy type of input simulation format (currently only simfile).',
                         required=False, default=False
                         )
-    parser.add_argument('-i', '--simfile', help='path to simulation input file.',
+    parser.add_argument('-i', '--simfile', help='path to simulation input file; JSON format.',
                         required=False, default=False
                         )
     parser.add_argument('-e', '--errfile', help='Specify path to input error file; JSON format',

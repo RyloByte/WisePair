@@ -109,11 +109,12 @@ def main(simdir, simlist):
 
     # make list of sim files
     list_dir = os.listdir(sim_path)
+    print simlist
     if simlist == False:
         sim_list = [x for x in list_dir if x.find('.csv') != -1 and x.find('_score.csv') == -1]
     else:
         try:
-            sim_list = ast.literal_eval(simlist)
+            sim_list = [x.rsplit('/', 1)[-1] for x in ast.literal_eval(simlist)]
         except:
             sim_list = simlist.split(',')
 
@@ -367,6 +368,7 @@ def main(simdir, simlist):
                                'x_res_max', 'x_res_min', 'x_res_mean', 'upper_bound']
             ) + '\n')
             for stats in sim_model_data:
+                print stats
                 o.write('\t'.join(stats) + '\n')
 
 

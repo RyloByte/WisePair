@@ -105,3 +105,40 @@ optional arguments:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify path to input error file; JSON format  
 * * *
 * * *
+###Running the simulations to find sampling scheme
+* * *
+####**Example command to run `beanbag.py`**
+This example builds a virtual population of 300 individuals. It then precedes to sample this population 5 times, totaling 125 samples (25 samples/bout). The -r flag indicates that 50% of the population is present at the start of each bout.  
+```python
+python beanbag.py -t simfile -i real_data_frequencies.json -e pedant_error_rates.json -b 5 -s 125 -p 300 -r 0.5 -o example_output.csv
+```
+* * *
+####**Example command to run `wisepair.py`**
+This command takes the output from `beanbag.py` and runs it through wisepair. The output is a scoring matrix for the sample comparisons, a report visualization, and a stats file of the simulations.  
+```python
+python wisepair.py -s [location of beanbag.py output csv] -l [csv filename with no path]
+```
+* * *
+####**Example command to run `optimagic.py`**
+This command runs a optimization run to determine which sampling scheme would work best if 2 individuals need to be resampled at least 3 times from a population of 100 individuals.  
+The outputs from `beanbag.py` and `wisepair.py` are sent to the -s path in a directory called **OM_simdir**, and 2 csv files are produced which separate good and bad sampling schemes.  
+```python
+python optimagic.py -s [path to output] -p 100 -x 0.5 -l 20,25 -b 5,8 -r 2 -n 3 -u True -m 1 -t simfile -i real_data_frequencies.json -e pedant_error_rates.json
+```
+* * *
+* * *
+###Analyzing real data with simulations
+* * *
+####**Example command to run `optimagic.py`**
+Run optimagic with the bounds of the real data sampling scheme at a higher iteration limit to build a model for the real data.  
+```python
+python optimagic.py -s [path to output] -p 100 -x 0.5 -l 30 -b 5 -r 2 -n 3 -u True -m 10 -t simfile -i real_data_frequencies.json -e pedant_error_rates.json
+```
+* * *
+####**Example command to run `wisepair.py`**
+Copy the model_stats.tsv from the optimagic output directory to the same location as the real data files.  
+Output from this will be identified resampled individuals.  
+```python
+python wisepair.py -s [location of beanbag.py output csv] -l [csv filename with no path]
+```
+* * *
