@@ -121,7 +121,8 @@ def virtualSeason(virt_pop_tuple):
             for m in range(int(per_bout[n])):
                 sample = choice(temp_list)
                 bout_list.append(sample)
-                temp_list.pop(temp_list.index(sample))
+                # changed this so that it assumes replacement, for pop < sample number per bout
+                # temp_list.pop(temp_list.index(sample))
             season_list.append(bout_list)
     else:
         print sample_limit, 'samples taken over', bout_limit, 'bouts...'
@@ -169,18 +170,16 @@ def resampled(season_sample):
     return multiplicity_resampled_dictionary
 
 
-def cause_FA(sub_genotype, FA_rate_dictionary, locus_name):
+def cause_FA(sub_genotype, FA_rate, locus_name):
     allele_1 = sub_genotype[:3]
     allele_2 = sub_genotype[3:]
     probability = float(randint(0, 100) / float(100))
-    FA_rate = float(FA_rate_dictionary[locus_name])
     # print locus_name
     # print probability,FA_rate
     if probability <= FA_rate:
         allele_1 = 'FFF'
     # for allele 2
     probability = float(randint(0, 100) / float(100))
-    FA_rate = float(FA_rate_dictionary[locus_name])
     # print probability, FA_rate
     if probability <= FA_rate:
         allele_2 = 'FFF'
@@ -189,18 +188,18 @@ def cause_FA(sub_genotype, FA_rate_dictionary, locus_name):
     return sub_genotype
 
 
-def cause_ADO(sub_genotype, ADO_rate_dictionary, locus_name):
+def cause_ADO(sub_genotype, ADO_rate, locus_name):
     allele_1 = sub_genotype[:3]
     allele_2 = sub_genotype[3:]
+    rep_1 = 1
+    rep_2 = 1
     if allele_1 != allele_2:
         # for allele 1
         probability = float(randint(0, 100) / float(100))
-        ADO_rate = float(ADO_rate_dictionary[locus_name])
         if probability <= ADO_rate:
             allele_1 = allele_2
         # for allele 2
         probability = float(randint(0, 100) / float(100))
-        ADO_rate = float(ADO_rate_dictionary[locus_name])
         if probability <= ADO_rate:
             allele_2 = allele_1
         sub_genotype = str(allele_1) + str(allele_2)
@@ -237,6 +236,7 @@ def main(simtype, infile, errfile, boutlimit,
     # save_file_name = 'P{0}_SL{1}_BL{2}.csv'.format(unicode(str(len(population)),'utf-8'),
     #                                            unicode(str(sample_limit),'utf-8'),
     #                                            unicode(str(bout_limit),'utf-8'))
+    '''
     save_file_name = outfile
     with open(save_file_name, 'w') as o:
         double_locus_name_list = [x for pair in zip(locus_name_list, locus_name_list)
@@ -253,6 +253,48 @@ def main(simtype, infile, errfile, boutlimit,
                         locus_name = code2loci_dictionary[genotype[:3]]
                         genotype = cause_FA(genotype, FA_rate_dictionary, locus_name)
                         genotype = cause_ADO(genotype, ADO_rate_dictionary, locus_name)
+                        new_allele_code_list.append(genotype)
+                    code_list_1 = [x[:3] for x in new_allele_code_list]
+                    code_list_2 = [x[3:] for x in new_allele_code_list]
+                    double_code_list = [x for pair in zip(code_list_1, code_list_2)
+                                        for x in pair]
+                    o.write(sample_id + '_' + str(bout_index) + ','
+                            + ','.join(double_code_list) + '\n')
+    '''
+    # EXPERIMENTAL: trying to incorporate a repeat function to deal with high ADO error rates                
+    save_file_name = outfile
+    with open(save_file_name, 'w') as o:
+        double_locus_name_list = [x for pair in zip(locus_name_list, locus_name_list)
+                                  for x in pair]
+        o.write('sample,' + ','.join(double_locus_name_list) + '\n')
+        for bout_index in range(0, len(season_sample)):
+            sample_id_list = season_sample[bout_index]
+            for sample_id in sample_id_list:
+                if sample_id in population_dictionary[1].keys():
+                    allele_code_list = population_dictionary[1][sample_id]
+                    new_allele_code_list = []
+                    for genotype_index in range(0, len(allele_code_list)):
+                        genotype = allele_code_list[genotype_index]
+                        locus_name = code2loci_dictionary[genotype[:3]]
+                        FA_rate = float(FA_rate_dictionary[locus_name])
+                        ADO_rate = float(ADO_rate_dictionary[locus_name])
+                        genotype = cause_FA(genotype, FA_rate, locus_name)
+                        # EXPERIMENTAL: dealing with high ADO error rate
+                        # First I try will be reducing error to under 10%
+                        if ADO_rate > 0.1:
+                            print 'error rate to high, you need repeats...'
+                            repeat = 1
+                            stop = False
+                            while stop is False:
+                                new_genotype = cause_ADO(genotype, ADO_rate, locus_name)
+                                if new_genotype != genotype:
+                                    new_genotype = cause_ADO(genotype, ADO_rate, locus_name)
+                                    repeat += 1
+                                else:
+                                    stop = True
+                        else:
+                            genotype = cause_ADO(genotype, ADO_rate, locus_name)
+                        print locus_name, genotype, repeat
                         new_allele_code_list.append(genotype)
                     code_list_1 = [x[:3] for x in new_allele_code_list]
                     code_list_2 = [x[3:] for x in new_allele_code_list]
